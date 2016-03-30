@@ -1,4 +1,4 @@
-#include "Thermistance.h"
+#include "SrThermistance.h"
 
 
 Thermistance::Thermistance(){}

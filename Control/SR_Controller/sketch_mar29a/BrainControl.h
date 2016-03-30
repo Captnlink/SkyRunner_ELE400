@@ -1,14 +1,14 @@
 /**
     Project : CableCam_Chariot\n
     @file BrainControl.h
-    @brief Gère le contrôle du moteur selon les interfaces externes
+    @brief Gï¿½re le contrï¿½le du moteur selon les interfaces externes
 
     @author Captnlink
 
     @version 1.0
     @date March 20, 2016
 
-	Gère le moteur avec un PID et les informations receuillit par les capteurs (autres classes)
+	Gï¿½re le moteur avec un PID et les informations receuillit par les capteurs (autres classes)
 
 */
 
@@ -19,6 +19,7 @@
 #include "SrThermistance.h"
 #include "PidController.h"
 #include "Sabertooth.h"
+#include "Arduino.h"
 
 #define MAX_POSITION_LV_4 400 //En cm pour la distance ou la position
 #define MAX_POSITION_LV_3 300 //En cm
@@ -30,8 +31,6 @@
 #define MAX_VITESSE_2 20
 #define MAX_VITESSE_1 10
 
-#define SYREN_DRIVE_ADRESSE 127
-
 
 /**
     @class BrainControl BrainControl.h
@@ -41,17 +40,17 @@
     @version 1.1
     @date March 20, 2016
 
-    Gère le PID du controle de vitesse. Process les informations des capteurs et de l'interfaces
-	afin d'envoyer à la drive une consigne en tension.
+    Gï¿½re le PID du controle de vitesse. Process les informations des capteurs et de l'interfaces
+	afin d'envoyer ï¿½ la drive une consigne en tension.
 
 */
 class BrainControl
 {
 private:
-    //Mettre dans le .h des default config, un enum pour chaque possibilité d'erreur
+    //Mettre dans le .h des default config, un enum pour chaque possibilitï¿½ d'erreur
 
 	int mPositionActuel; //Position du chariot sur le cable (cm)
-	int mPositionMax; //Position maximum du point de départ (Longueur de cable) (cm)
+	int mPositionMax; //Position maximum du point de dï¿½part (Longueur de cable) (cm)
 	int mVitesseActuel; // en cm/sec
 	int mVitesseVoulu;// en cm/sec
     int mDistanceAvant;  //Distance vue par le capteur de distance avant
@@ -69,8 +68,8 @@ private:
 
 	PidController PID;
 	SrEncodeur Encodeur;
-    Thermistance TempBatterie;
-    Sabertooth SyrenDrive(SYREN_DRIVE_ADRESSE);//127 is Serial address de la drive
+  Thermistance TempBatterie;
+  Sabertooth SyrenDrive;//127 is Serial address de la drive
 
 public:
     BrainControl();
@@ -86,34 +85,33 @@ public:
     void Update();
 
     bool SetArretUrgenge();
-    bool IsArretUrgence(return arretUrgence);
+    bool IsArretUrgence(){return arretUrgence;}
 
 	//Setters
 	void SetVitesseVoulu(int _vitesseVoulu);
-	void SetPositionMax(int _positionMax){mPositionMax = _positionMax}
+	void SetPositionMax(int _positionMax){mPositionMax = _positionMax;}
 
-	bool SetAcceleration();
+	bool SetAcceleration(int _acceleration);
 
 	//Getters
-	int GetVitesseVoulu(return mVitesseVoulu);
-	int GetVitesseActuel(return mVitesseActuel);
+	int GetVitesseVoulu(){return mVitesseVoulu;}
+	int GetVitesseActuel(){return mVitesseActuel;}
 
-	int GetPositionMax(return mPositionMax);
-	int GetPositionActuel(return mPositionActuel);
+	int GetPositionMax(){return mPositionMax;}
+	int GetPositionActuel(){return mPositionActuel;}
 
-	int GetAcceleration(return mAcceleration);
-	int GetDeceleration(return mDecceleration);
+	int GetAcceleration(){return mAcceleration;}
 
-	double GetTemperatureBaterie(return TempBatterie.GetTempratureCelsius());
+	double GetTemperatureBaterie(){return TempBatterie.GetTempratureCelsius();}
 
 private:
     /**
     @fn CalculPosition
     @brief Fait le calcul de position selon la direction et les pulses par revolution
-    @param [NAME] : Paramètre de la founction
-    @return double en mètres
+    @param [NAME] : Paramï¿½tre de la founction
+    @return double en mï¿½tres
 
     */
-}
+};
 
 #endif

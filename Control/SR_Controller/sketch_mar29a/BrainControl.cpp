@@ -1,7 +1,10 @@
-BrainControl::BrainControl(){
+#include "BrainControl.h"
+
+BrainControl::BrainControl()
+  :SyrenDrive(100){
 
 	mPositionActuel=0; //Position du chariot sur le cable
-	mPositionMax=0; //Position maximum du point de départ (Longueur de cable)
+	mPositionMax=0; //Position maximum du point de dï¿½part (Longueur de cable)
 
 	mVitesseActuel=0;
 	mVitesseVoulu=0;
@@ -32,12 +35,12 @@ void BrainControl::Update(){
     if(mOutputPID>127)mOutputPID =127; //Max output qui peut etre fournit a la drive
     if(mOutputPID<-127)mOutputPID =-127;//Max output qui peut etre fournit a la drive
 
-    if(mAcceleration == 0) SyrenDrive.setRamping(1);
-    else if(mAcceleration == 1) SyrenDrive.setRamping(10);
-    else if(mAcceleration == 2) SyrenDrive.setRamping(25);
-    else if(mAcceleration == 3) SyrenDrive.setRamping(80);
-    else if(mAcceleration == 4) SyrenDrive.setRamping(11);
-    else SyrenDrive.setRamping(20);
+    if(mAcceleration == 0) {SyrenDrive.setRamping(1);}
+    else if(mAcceleration == 1) {SyrenDrive.setRamping(10);}
+    else if(mAcceleration == 2) {SyrenDrive.setRamping(25);}
+    else if(mAcceleration == 3) {SyrenDrive.setRamping(80);}
+    else if(mAcceleration == 4) {SyrenDrive.setRamping(11);}
+    else {SyrenDrive.setRamping(20);}
 
     SyrenDrive.motor(mOutputPID);
 }

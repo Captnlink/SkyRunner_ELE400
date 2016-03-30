@@ -15,6 +15,7 @@
 #define SRENCODEUR_H
 
 #include "LibEncoder.h"
+#include "Arduino.h"
 
 #define SAMPLEVITESSE 10
 #define RAYONCM 5
@@ -34,19 +35,18 @@ class SrEncodeur
          */
         void Update();
 
-        int GetPositionCm() const { return PositionCm; }
-        int GetVitesse() const { return VitesseMoy; }
-        int GetDirection() const { return mDirecttion; }
-
-    protected:
+        int GetPositionCm() { return mPositionCm; }
+        int GetVitesse() { return mVitesseMoy; }
+        int GetDirection() { return mDirecttion; }
 
     private:
-        Encoder EncodeurMecanique(2,3); //!< Objet "PositionCm"
+        Encoder EncodeurMecanique; //!< Objet "PositionCm"
         long mOldPosition;
         int mPositionCm; //!< Variable "PositionCm"
         int mVitesseMoy; //!< Variable "VitesseMoy" Vitesse Moyenne
         int mVitesseArray[SAMPLEVITESSE]; //!< Variable "VitesseArray" Vitesses pour la moyenne
         int mDirecttion;
+		int oldTime;
 };
 
 #endif // SRENCODEUR_H

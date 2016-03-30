@@ -12,12 +12,4 @@
 	ainsi que de donnee une structure "projet" aux changements effectuee par la team.
 */
 
-#include <iostream>
 
-using namespace std;
-
-int main()
-{
-    cout << "Hello world!" << endl;
-    return 0;
-}
