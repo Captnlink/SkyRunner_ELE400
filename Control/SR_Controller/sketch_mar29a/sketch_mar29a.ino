@@ -17,4 +17,14 @@ void loop() {
   double volt   = Controlleur.GetTensionBaterie();
   int vitesse   = Controlleur.GetVitesseActuel();
   int _position = Controlleur.GetPositionActuel();
+
+  Serial.print("Temperature = ");
+  Serial.println(temp);
+  Serial.print("Voltage     = ");
+  Serial.println(volt);
+  Serial.print("Vitesse     = ");
+  Serial.println(vitesse);
+  Serial.print("Position    = ");
+  Serial.println(_position);
 }
+
