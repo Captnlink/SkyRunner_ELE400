@@ -10,8 +10,11 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  
   Controlleur.Update();
 
-  Controlleur.GetTemperatureBaterie();
-  Controlleur.GetTensionBaterie();
+  double temp   = Controlleur.GetTemperatureBaterie();
+  double volt   = Controlleur.GetTensionBaterie();
+  int vitesse   = Controlleur.GetVitesseActuel();
+  int _position = Controlleur.GetPositionActuel();
 }

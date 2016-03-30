@@ -21,7 +21,8 @@
 #include "Sabertooth.h"
 #include "Arduino.h"
 
-#define MAX_POSITION_LV_4 400 //En cm pour la distance ou la position
+#define MAX_POSITION_LV_5 500 //En cm pour la distance ou la position
+#define MAX_POSITION_LV_4 400 //En cm
 #define MAX_POSITION_LV_3 300 //En cm
 #define MAX_POSITION_LV_2 200 //En cm
 #define MAX_POSITION_LV_1 100 //En cm
@@ -30,6 +31,8 @@
 #define MAX_VITESSE_3 30
 #define MAX_VITESSE_2 20
 #define MAX_VITESSE_1 10
+
+#define SYREN_DRIVE_ADDR 127
 
 
 /**
@@ -68,8 +71,8 @@ private:
 
 	PidController PID;
 	SrEncodeur Encodeur;
-  Batterie mBatterie;
-  Sabertooth SyrenDrive;//127 is Serial address de la drive
+	Batterie mBatterie;
+	Sabertooth SyrenDrive;
 
 public:
     BrainControl();
@@ -85,34 +88,26 @@ public:
     void Update();
 
     bool SetArretUrgenge();
-    bool IsArretUrgence(){return arretUrgence;}
+    bool IsArretUrgence		(){return arretUrgence;}
 
 	//Setters
 	void SetVitesseVoulu(int _vitesseVoulu);
 	void SetPositionMax(int _positionMax){mPositionMax = _positionMax;}
-
 	bool SetAcceleration(int _acceleration);
 
 	//Getters
-	int GetVitesseVoulu(){return mVitesseVoulu;}
-	int GetVitesseActuel(){return mVitesseActuel;}
+	int GetVitesseVoulu		(){return mVitesseVoulu;}
+	int GetVitesseActuel	(){return mVitesseActuel;}
 
-	int GetPositionMax(){return mPositionMax;}
-	int GetPositionActuel(){return mPositionActuel;}
-
-	int GetAcceleration(){return mAcceleration;}
+	int GetPositionMax		(){return mPositionMax;}
+	int GetPositionActuel	(){return mPositionActuel;}
+	int GetDistanceAvant 	(){return mDistanceAvant;}
+	int GetDistanceArriere	(){return mDistanceArriere;}
+	
+	int GetAcceleration		(){return mAcceleration;}
 
 	double GetTemperatureBaterie(){return mBatterie.GetTempratureCelsius();}
-	double GetTensionBaterie(){return mBatterie.GetVoltage();}
-
-private:
-    /**
-    @fn CalculPosition
-    @brief Fait le calcul de position selon la direction et les pulses par revolution
-    @param [NAME] : Param�tre de la founction
-    @return double en m�tres
-
-    */
+	double GetTensionBaterie	(){return mBatterie.GetVoltage();}
 };
 
 #endif
