@@ -1,13 +1,13 @@
-#include "SrThermistance.h"
+#include "SrBatterie.h"
 
 
-Thermistance::Thermistance(){}
+Batterie::Batterie(){}
 
 // Get an average samples
-void Thermistance::GetSample(){
+void Batterie::GetSample(int _SensorPin){
 // take N samples in a row, with a slight delay
   for (i=0; i < NUMSAMPLES; i++) {
-   samples[i] = analogRead(THERMISTORPIN);
+   samples[i] = analogRead(_SensorPin); //THERMISTORPIN
    delay(10);
  }
    // average all the samples out
@@ -19,14 +19,14 @@ void Thermistance::GetSample(){
 }
 
   // convert the average value to resistance
- void Thermistance::ConvertAnalogueToResistance(){
+ void Batterie::ConvertAnalogueToResistance(){
 
 	average = 1023 / average - 1;
 	average = SERIESRESISTOR / average;
  }
 
    // convert the resistance value to celcius
- void Thermistance::ConvertResistanceToCelcius(){
+ void Batterie::ConvertResistanceToCelcius(){
 
 	steinhart = average / THERMISTORNOMINAL;     // (R/Ro)
   steinhart = log(steinhart);                  // ln(R/Ro)
@@ -36,10 +36,16 @@ void Thermistance::GetSample(){
   steinhart -= 273.15;
  }
 
-  double Thermistance::GetTempratureCelsius(){
+  double Batterie::GetTempratureCelsius(){
 
-	 GetSample();
-	 ConvertAnalogueToResistance();
+	GetSample(THERMISTORPIN);
+	ConvertAnalogueToResistance();
 	ConvertResistanceToCelcius();
 
+ }
+
+ double Batterie::GetVoltage(){
+	 GetSample(DIVISEUR_TENSION_PIN);
+	 return average * DIVISEUR_TENSION_MAX / 1023;
+	 
  }

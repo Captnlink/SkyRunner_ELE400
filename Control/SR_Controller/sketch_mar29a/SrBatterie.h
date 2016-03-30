@@ -1,7 +1,7 @@
 /**
     Project : CableCam_Chariot\n
-    @file Thermistance.h
-    @brief Recupere la temperature de la thermistance
+    @file SrBatterie.h
+    @brief Recupere la temperature de la thermistance et la tension de la batterie
 
     @author Captnlink
 
@@ -24,8 +24,11 @@
 #define BCOEFFICIENT 3950 // Coefficient Beta de la thermistance (normalement 3000-4000)
 #define SERIESRESISTOR 10000  // La valeur 'l'autre' resistance
 
+#define DIVISEUR_TENSION_PIN A1   // Pin analogique du arduino
+#define DIVISEUR_TENSION_MAX 15   // Tension maximal du diviseur de tension
+
 /**
-    @class Thermistance Thermistance.h
+    @class Batterie SrBatterie.h
     @brief Permet l'acquisition d'une valeur de temperature
 
     @author Captnlink
@@ -35,10 +38,10 @@
 
 	La librairie a ete originalement cree par Lady Ada
 */
-class Thermistance
+class Batterie
 {
 public:
-    Thermistance();
+    Batterie();
 
     /**
     @fn GetTempratureCelsius
@@ -46,6 +49,12 @@ public:
     @return double Temperature degree C
     */
 	double GetTempratureCelsius();
+	/**
+    @fn GetVoltage
+    @brief Recupere la tension de la batterie
+	@return double Tension 0-5v
+    */
+	double GetVoltage();
 
 private:
 	int i;
@@ -53,7 +62,7 @@ private:
 	int samples[NUMSAMPLES];
 	double steinhart;
 
-	void GetSample();
+	void GetSample(int _SensorPin);
 	void ConvertAnalogueToResistance();
 	void ConvertResistanceToCelcius();
 };

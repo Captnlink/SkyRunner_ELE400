@@ -16,7 +16,7 @@
 #define BRAINCONTROL_H_
 
 #include "SrEncodeur.h"
-#include "SrThermistance.h"
+#include "SrBatterie.h"
 #include "PidController.h"
 #include "Sabertooth.h"
 #include "Arduino.h"
@@ -53,7 +53,7 @@ private:
 	int mPositionMax; //Position maximum du point de d�part (Longueur de cable) (cm)
 	int mVitesseActuel; // en cm/sec
 	int mVitesseVoulu;// en cm/sec
-    int mDistanceAvant;  //Distance vue par le capteur de distance avant
+  int mDistanceAvant;  //Distance vue par le capteur de distance avant
 	int mDistanceArriere;//Distance vue par le capteur de distance arriere
 
 
@@ -68,7 +68,7 @@ private:
 
 	PidController PID;
 	SrEncodeur Encodeur;
-  Thermistance TempBatterie;
+  Batterie mBatterie;
   Sabertooth SyrenDrive;//127 is Serial address de la drive
 
 public:
@@ -102,7 +102,8 @@ public:
 
 	int GetAcceleration(){return mAcceleration;}
 
-	double GetTemperatureBaterie(){return TempBatterie.GetTempratureCelsius();}
+	double GetTemperatureBaterie(){return mBatterie.GetTempratureCelsius();}
+	double GetTensionBaterie(){return mBatterie.GetVoltage();}
 
 private:
     /**
