@@ -1,3 +1,4 @@
+
 /**
     Project : CableCam_Chariot\n
     @file SrEncodeur.h
@@ -14,11 +15,10 @@
 #ifndef SRENCODEUR_H
 #define SRENCODEUR_H
 
-#include "LibEncoder.h"
 #include "Arduino.h"
-
-#define SAMPLEVITESSE 10
-#define RAYONCM 5
+//#define ENCODER_OPTIMIZE_INTERRUPTS
+#include "Encoder.h"
+#include "SrConfig.h"
 
 #define DIRECTION_ARRIERE   -1
 #define DIRECTION_AVANT     1
@@ -36,17 +36,17 @@ class SrEncodeur
         void Update();
 
         int GetPositionCm() { return mPositionCm; }
-        int GetVitesse() { return mVitesseMoy; }
+        double GetVitesse() { return mVitesseMoy; }
         int GetDirection() { return mDirecttion; }
 
     private:
         Encoder EncodeurMecanique; //!< Objet "PositionCm"
         long mOldPosition;
         int mPositionCm; //!< Variable "PositionCm"
-        int mVitesseMoy; //!< Variable "VitesseMoy" Vitesse Moyenne
-        int mVitesseArray[SAMPLEVITESSE]; //!< Variable "VitesseArray" Vitesses pour la moyenne
+        double mVitesseMoy; //!< Variable "VitesseMoy" Vitesse Moyenne
+        double mVitesseArray[SAMPLEVITESSE]; //!< Variable "VitesseArray" Vitesses pour la moyenne
         int mDirecttion;
-		int oldTime;
+		    double oldTime;
 };
 
 #endif // SRENCODEUR_H

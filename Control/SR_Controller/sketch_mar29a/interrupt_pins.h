@@ -205,3 +205,4 @@
 #error "Encoder requires interrupt pins, but this board does not have any :("
 #error "You could try defining ENCODER_DO_NOT_USE_INTERRUPTS as a kludge."
 #endif
+

@@ -1,14 +1,15 @@
 /**
     Project : CableCam_Chariot\n
     @file BrainControl.h
-    @brief G�re le contr�le du moteur selon les interfaces externes
+    @brief Gere le controle du moteur selon les interfaces externes
 
     @author Captnlink
 
-    @version 1.0
+    @version 1.9
     @date March 20, 2016
 
-	G�re le moteur avec un PID et les informations receuillit par les capteurs (autres classes)
+	Gere le moteur avec un PID et les informations receuillit par les capteurs afin de controller la vitesse
+  maximal et courante
 
 */
 
@@ -20,62 +21,45 @@
 #include "PidController.h"
 #include "Sabertooth.h"
 #include "Arduino.h"
-
-#define MAX_POSITION_LV_5 500 //En cm pour la distance ou la position
-#define MAX_POSITION_LV_4 400 //En cm
-#define MAX_POSITION_LV_3 300 //En cm
-#define MAX_POSITION_LV_2 200 //En cm
-#define MAX_POSITION_LV_1 100 //En cm
-
-#define MAX_VITESSE_4 40
-#define MAX_VITESSE_3 30
-#define MAX_VITESSE_2 20
-#define MAX_VITESSE_1 10
-
-#define SYREN_DRIVE_ADDR 127
-
+#include "SrConfig.h"
 
 /**
     @class BrainControl BrainControl.h
     @brief Gere la securite automatique et le controle de la drive
 
     @author Captnlink
-    @version 1.1
-    @date March 20, 2016
+    @version 1.9
+    @date March 30, 2016
 
-    G�re le PID du controle de vitesse. Process les informations des capteurs et de l'interfaces
-	afin d'envoyer � la drive une consigne en tension.
+    Gere le PID du controle de vitesse. Process les informations des capteurs et de l'interfaces
+	afin d'envoyer a la drive une consigne en tension.
 
 */
 class BrainControl
 {
 private:
-    //Mettre dans le .h des default config, un enum pour chaque possibilit� d'erreur
-
-	int mPositionActuel; //Position du chariot sur le cable (cm)
-	int mPositionMax; //Position maximum du point de d�part (Longueur de cable) (cm)
-	int mVitesseActuel; // en cm/sec
-	int mVitesseVoulu;// en cm/sec
-  int mDistanceAvant;  //Distance vue par le capteur de distance avant
-	int mDistanceArriere;//Distance vue par le capteur de distance arriere
-
+	int mPositionActuel;  //Position du chariot sur le cable (cm)
+	int mPositionMax;     //Position maximum du point de depart (Longueur de cable) (cm)
+	int mVitesseActuel;   //Vitesse actuel du chariot en cm/sec
+	int mVitesseVoulu;    //Vitesse voulu du chariot en cm/sec
+  int mDistanceAvant;   //Distance vue par le capteur de distance avant
+	int mDistanceArriere; //Distance vue par le capteur de distance arriere
 
     //127 = Vitesse Max avant
     //0  = Vitesse Null
     //-127   = Vitesse Max arriere
 	double mOutputPID;
-
 	int mAcceleration; // 0 = Max et 5 = Very Slow
-
 	bool arretUrgence;
 
-	PidController PID;
+	PidController PID;  //PID pour la sortie vers la drive
 	SrEncodeur Encodeur;
 	Batterie mBatterie;
-	Sabertooth SyrenDrive;
+  Sabertooth SyrenDrive
+	;
 
 public:
-    BrainControl();
+    BrainControl(Sabertooth _SyrenDrive);
 
     /**
     @fn Update
@@ -88,7 +72,7 @@ public:
     void Update();
 
     bool SetArretUrgenge();
-    bool IsArretUrgence		(){return arretUrgence;}
+    bool IsArretUrgence(){return arretUrgence;}
 
 	//Setters
 	void SetVitesseVoulu(int _vitesseVoulu);

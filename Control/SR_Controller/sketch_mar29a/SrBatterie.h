@@ -5,7 +5,7 @@
 
     @author Captnlink
 
-    @version 1.0
+    @version 1.3
     @date March 20, 2016
 
     @warning Il y a un delai(10) (10 ms) dans la fonction GetSample().
@@ -16,16 +16,7 @@
 #define THERMISTANCE_H_
 
 #include <Arduino.h>
-
-#define THERMISTORPIN A0   // Pin analogique du arduino
-#define THERMISTORNOMINAL 10000  // resistance a 25 degrees C
-#define TEMPERATURENOMINAL 25  // temp. pour resistance nominal (almost always 25 C)
-#define NUMSAMPLES 5 // Nombre d'echantillonage pour la moyenne, more takes longer but is more 'smooth'
-#define BCOEFFICIENT 3950 // Coefficient Beta de la thermistance (normalement 3000-4000)
-#define SERIESRESISTOR 10000  // La valeur 'l'autre' resistance
-
-#define DIVISEUR_TENSION_PIN A1   // Pin analogique du arduino
-#define DIVISEUR_TENSION_MAX 15   // Tension maximal du diviseur de tension
+#include "SrConfig.h"
 
 /**
     @class Batterie SrBatterie.h
@@ -33,10 +24,10 @@
 
     @author Captnlink
 
-    @version 1.1
+    @version 1.3
     @date March 20, 2016
 
-	La librairie a ete originalement cree par Lady Ada
+	  La librairie a ete originalement cree par Lady Ada
 */
 class Batterie
 {

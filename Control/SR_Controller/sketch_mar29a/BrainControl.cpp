@@ -1,20 +1,15 @@
 #include "BrainControl.h"
 
-BrainControl::BrainControl()
-  :SyrenDrive(SYREN_DRIVE_ADDR){
+BrainControl::BrainControl(Sabertooth _SyrenDrive):SyrenDrive(_SyrenDrive.address(),_SyrenDrive.port()){
 
-	mPositionActuel=0; //Position du chariot sur le cable
-	mPositionMax=0; //Position maximum du point de d�part (Longueur de cable)
-
+	mPositionActuel=0;
+	mPositionMax=0;
 	mVitesseActuel=0;
 	mVitesseVoulu=0;
-
-	mDistanceAvant = 0;  //Distance vue par le capteur de distance avant
-	mDistanceArriere = 0;//Distance vue par le capteur de distance arriere
-
-	mOutputPID = 0; //Output fournit a la drive, controller par le PID
-	mAcceleration=0;  // 0 = Max et 5 = Very Slow
-
+	mDistanceAvant = 0;
+	mDistanceArriere = 0;
+	mOutputPID = 0;
+	mAcceleration=0; 
 	arretUrgence = true;
 }
 
@@ -34,7 +29,8 @@ void BrainControl::Update(){
     mOutputPID = PID.UpdatePid(mVitesseVoulu - mVitesseActuel,mVitesseActuel);
     if(mOutputPID>127)mOutputPID =127; //Max output qui peut etre fournit a la drive
     if(mOutputPID<-127)mOutputPID =-127;//Max output qui peut etre fournit a la drive
-
+    
+     //Communication Serie avec la ddrive
     if(mAcceleration == 0) {SyrenDrive.setRamping(1);}
     else if(mAcceleration == 1) {SyrenDrive.setRamping(10);}
     else if(mAcceleration == 2) {SyrenDrive.setRamping(25);}

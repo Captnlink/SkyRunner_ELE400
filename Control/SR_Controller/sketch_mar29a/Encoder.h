@@ -5,17 +5,17 @@
  * Version 1.2 - fix -2 bug in C-only code
  * Version 1.1 - expand to support boards with up to 60 interrupts
  * Version 1.0 - initial release
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,8 +26,8 @@
  */
 
 
-#ifndef LibEncoder_h_
-#define LibEncoder_h_
+#ifndef Encoder_h_
+#define Encoder_h_
 
 #if defined(ARDUINO) && ARDUINO >= 100
 #include "Arduino.h"
@@ -134,7 +134,7 @@ private:
 public:
 	static Encoder_internal_state_t * interruptArgs[ENCODER_ARGLIST_SIZE];
 
-//                           _______         _______
+//                           _______         _______       
 //               Pin1 ______|       |_______|       |______ Pin1
 // negative <---         _______         _______         __      --> positive
 //               Pin2 __|       |_______|       |_______|   Pin2
@@ -181,7 +181,10 @@ public:
 	}
 */
 
-private:
+public:
+	// update() is not meant to be called from outside Encoder,
+	// but it is public to allow static interrupt routines.
+	// DO NOT call update() directly from sketches.
 	static void update(Encoder_internal_state_t *arg) {
 #if defined(__AVR__)
 		// The compiler believes this is just 1 line of code, so
@@ -290,6 +293,7 @@ private:
 		}
 #endif
 	}
+private:
 /*
 #if defined(__AVR__)
 	// TODO: this must be a no inline function
@@ -936,6 +940,11 @@ ISR(INT6_vect) { Encoder::update(Encoder::interruptArgs[SCRAMBLE_INT_ORDER(6)]);
 ISR(INT7_vect) { Encoder::update(Encoder::interruptArgs[SCRAMBLE_INT_ORDER(7)]); }
 #endif
 #endif // AVR
+#if defined(attachInterrupt)
+// Don't intefere with other libraries or sketch use of attachInterrupt()
+// https://github.com/PaulStoffregen/Encoder/issues/8
+#undef attachInterrupt
+#endif
 #endif // ENCODER_OPTIMIZE_INTERRUPTS
 
 
