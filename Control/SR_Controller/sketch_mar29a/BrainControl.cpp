@@ -1,6 +1,9 @@
 #include "BrainControl.h"
 
-BrainControl::BrainControl(Sabertooth _SyrenDrive):SyrenDrive(_SyrenDrive.address(),_SyrenDrive.port()){
+BrainControl::BrainControl(Sabertooth _SyrenDrive):
+	SyrenDrive(_SyrenDrive.address(),_SyrenDrive.port()),
+ CapteurDistanceAvant(TRIGGER_PIN_AVANT, ECHO_PIN_AVANT, MAX_DISTANCE),
+  CapteurDistanceArriere(TRIGGER_PIN_ARRIERE, ECHO_PIN_ARRIERE, MAX_DISTANCE){
 
 	mPositionActuel=0;
 	mPositionMax=0;
@@ -22,8 +25,8 @@ void BrainControl::Update(){
     Encodeur.Update();
     mVitesseActuel = Encodeur.GetVitesse();
     mPositionActuel = Encodeur.GetPositionCm();
-    //mDistanceAvant = GetDistanceCapteurAvant();
-    //mDistanceArriere = GetDistanceCapteurArriere();
+    mDistanceAvant = CapteurDistanceAvant.ping_cm();
+    mDistanceArriere = CapteurDistanceAvant.ping_cm();
     SetVitesseVoulu(mVitesseVoulu);
 
     mOutputPID = PID.UpdatePid(mVitesseVoulu - mVitesseActuel,mVitesseActuel);

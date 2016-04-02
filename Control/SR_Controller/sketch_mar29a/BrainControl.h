@@ -22,6 +22,7 @@
 #include "Sabertooth.h"
 #include "Arduino.h"
 #include "SrConfig.h"
+#include "NewPing.h"
 
 /**
     @class BrainControl BrainControl.h
@@ -35,6 +36,13 @@
 	afin d'envoyer a la drive une consigne en tension.
 
 */
+
+#define TRIGGER_PIN_AVANT  12
+#define TRIGGER_PIN_ARRIERE  14
+#define ECHO_PIN_AVANT     11
+#define ECHO_PIN_ARRIERE     13
+#define MAX_DISTANCE 500
+
 class BrainControl
 {
 private:
@@ -42,7 +50,7 @@ private:
 	int mPositionMax;     //Position maximum du point de depart (Longueur de cable) (cm)
 	int mVitesseActuel;   //Vitesse actuel du chariot en cm/sec
 	int mVitesseVoulu;    //Vitesse voulu du chariot en cm/sec
-  int mDistanceAvant;   //Distance vue par le capteur de distance avant
+	int mDistanceAvant;   //Distance vue par le capteur de distance avant
 	int mDistanceArriere; //Distance vue par le capteur de distance arriere
 
     //127 = Vitesse Max avant
@@ -55,8 +63,10 @@ private:
 	PidController PID;  //PID pour la sortie vers la drive
 	SrEncodeur Encodeur;
 	Batterie mBatterie;
-  Sabertooth SyrenDrive
-	;
+	Sabertooth SyrenDrive;
+	NewPing CapteurDistanceAvant;
+	NewPing CapteurDistanceArriere;
+	
 
 public:
     BrainControl(Sabertooth _SyrenDrive);
