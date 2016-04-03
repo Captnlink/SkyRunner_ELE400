@@ -1,18 +1,18 @@
 /**
     Project : CableCam_Chariot\n
     @file Etat_Led.cpp
-    @brief Gèrent la LED d'information selon les erreurs et warnings du systeme
+    @brief GÃ¨rent la LED d'information selon les erreurs et warnings du systeme
     @author Captnlink
 	@author Wsimon
 	
     @version 1.0
     @date March 20, 2016
-	Afin de visualiser les problèmes pouvant survenir à l'intérieur du controlleur
-	et les états à problèmes, cette class permet donc de gérer la LED.
+	Afin de visualiser les problÃ¨mes pouvant survenir Ã  l'intÃ©rieur du controlleur
+	et les Ã©tats Ã  problÃ¨mes, cette class permet donc de gÃ©rer la LED.
 
 
-	Il reste à vérifier la struct controller pour pouvoir utiliser les divers variables
-	et à mieux définir les états pour vérifier le statut 
+	Il reste Ã  vÃ©rifier la struct controller pour pouvoir utiliser les divers variables
+	et Ã  mieux dÃ©finir les Ã©tats pour vÃ©rifier le statut 
 	
 	bool SetEndOfCourse(t_ledstate* ledstate);	 // Etat: Chariot atteint Fin de course  -> led clignote entre le vert et le jaune
 bool SetCantGoSetPoint(t_ledstate* ledstate);
@@ -21,113 +21,115 @@ bool SetCantGoSetPoint(t_ledstate* ledstate);
 
 #include"Etat_led.h"
 
-#define TENSION_BATTERIE_FAIBLE 11  // tension définit comme trop basse en volt
+#define TENSION_BATTERIE_FAIBLE 11  // tension dÃ©finit comme trop basse en volt
 
-#define TEMP_BATTERIE_TROP_CHAUDE 70 // temperature définit comme trop chaude en celsius
+#define TEMP_BATTERIE_TROP_CHAUDE 70 // temperature dÃ©finit comme trop chaude en celsius
 
-void etat_update(int previous_led_flash/*, données controlleur*/)
+void etat_update(t_etat_led_control* etat_led_control/*, donnÃ©es controlleur*/)
 {
-	int m_etape_flash ;
-	int m_etape_erreur=0;
-	m_etape_flash++;
+	long current_millis=millis();
 	
-	int statut_controlleur=1; // renvoie 1-> si le controlleur  va bien 0-> s'il a des proble`mes
-
-	
-
-
-	// ÉTAT batterie faible , on va clignoté la lumière verte
-	if(m_etape_erreur==1 && SetBattFaible())
+	// si le temps entre le dernier flash et l'instant prÃ©sent est plus grand que le dÃ©lai dÃ©fini, 
+	//on vÃ©rifie les Ã©tat pour modifier les leds
+	if(current_millis-etat_led_control->previous_led_flash>DELAY_ETAT_LED)
 	{
-		statut_controlleur=0;
-		// Apres avoir clignoté la lumière verte  pendant 8 cycle de flash, on passe au prochaine état
-		if(m_etape_flash==7)
+
+
+	// Ã‰TAT batterie faible , on va clignotÃ© la lumiÃ¨re verte
+	if(etat_led_control->m_etape_erreur==1 && SetBattFaible())
+	{
+		// si la batterie est faible on met statut de l'erreur Ã  1 pour dire qu'il a bien un probleme qui a Ã©tÃ© detectÃ©
+		etat_led_control->statut_erreur=true;
+		// Apres avoir clignotÃ© la lumiÃ¨re verte  pendant 8 cycle de flash, on passe au prochaine Ã©tat
+		if(etat_led_control->m_etape_flash==7) 
 		{
 			etat_led( NO_LIGHT);
-			m_etape_erreur++;
-			m_etape_flash=0;
+			etat_led_control->m_etape_erreur++; // modifie etape _erreur pour vÃ©rifier la prochaine erreur dÃ©tectÃ©
+			etat_led_control->m_etape_flash=0; // remet Ã  0 le cycle de clignotement
 		}
-		else if(m_etape_flash %2==0)
+		// si les 8 cycles ne sont pas effectuÃ©s alors on fait clignoter la led
+		else if(etat_led_control->m_etape_flash %2==0)
 		{
 			etat_led(GREEN);
 		}
-		else if(m_etape_flash %2==0)
+		else if(etat_led_control->m_etape_flash %2==0)
 		{
 			etat_led(NO_LIGHT);
 		}
 	}
 	else
 	{
-		m_etape_erreur++;
+		// si l'erreur n'est pas prÃ©sente alors, on vÃ©rifie la prochaine
+		etat_led_control->m_etape_erreur++;
 	}
 
 
-			// ÉTAT batterie trop chaude , on va clignoté la lumière rouge
-	if(m_etape_erreur==2 && SetBattTooHot())
+			// Ã‰TAT batterie trop chaude , on va clignotÃ© la lumiÃ¨re rouge
+	if(etat_led_control->m_etape_erreur==2 && SetBattTooHot())
 	{
-		statut_controlleur=0;
-		// Apres avoir clignoté la led en rouge  pendant 8 cycle de flash, on passe au prochaine état
-		if(m_etape_flash==7)
+		etat_led_control->statut_erreur=true;
+		// Apres avoir clignotÃ© la led en rouge  pendant 8 cycle de flash, on passe au prochaine Ã©tat
+		if(etat_led_control->m_etape_flash==7)
 		{
 			etat_led( NO_LIGHT);
-			m_etape_erreur++;
-			m_etape_flash=0;
+			etat_led_control->m_etape_erreur++;
+			etat_led_control->m_etape_flash=0; // remet clignotement Ã  0
 		}
-		else if(m_etape_flash %2==0)
+		else if(etat_led_control->m_etape_flash %2==0)
 		{
 			etat_led(RED);
 		}
-		else if(m_etape_flash %2==0)
+		else if(etat_led_control->m_etape_flash %2==0)
 		{
 			etat_led(NO_LIGHT);
 		}
 	}
 	else
 	{
-		m_etape_erreur++;
+		etat_led_control->m_etape_erreur++;
 	}
 
-			// ÉTAT objet détecté , on va clignoté la led entre le vert et le rouge
-	if(m_etape_erreur==3 && SetObjectDetected())
+			// Ã‰TAT objet dÃ©tectÃ© , on va clignotÃ© la led entre le vert et le rouge
+	if(etat_led_control->m_etape_erreur==3 && SetObjectDetected())
 	{
-		statut_controlleur=0;
-		// Apres avoir clignoté entre la led en vert et en rouge pendant 8 cycle de flash, on passe au prochaine état
-		if(m_etape_flash==7)
+		etat_led_control->statut_erreur=true;
+		// Apres avoir clignotÃ© entre la led en vert et en rouge pendant 8 cycle de flash, on passe au prochaine Ã©tat
+		if(etat_led_control->m_etape_flash==7)
 		{
 			etat_led( NO_LIGHT);
-			m_etape_erreur++;
-			m_etape_flash=0;
+			etat_led_control->m_etape_erreur++;
+			etat_led_control->m_etape_flash=0;
 		}
-		else if(m_etape_flash %2==0)
+		else if(etat_led_control->m_etape_flash %2==0)
 		{
 			etat_led(GREEN);
 		}
-		else if(m_etape_flash %2==0)
+		else if(etat_led_control->m_etape_flash %2==0)
 		{
 			etat_led(RED);
 		}
 	}
 	else
 	{
-		m_etape_erreur++;
+		etat_led_control->m_etape_erreur++;
 	}
 
  
 	
 
 
-		//ÉTAT l'arret d'urgence a été enclenché  lumière rouge constante
-	if(m_etape_erreur==4 && SetEmergencyStop())
+		//Ã‰TAT l'arret d'urgence a Ã©tÃ© enclenchÃ©  lumiÃ¨re rouge constante
+	if(etat_led_control->m_etape_erreur==4 && SetEmergencyStop())
 	{
-		statut_controlleur=0;
-		// Apres avoir clignoté entre la led en VERT et en JAUNE  pendant 8 cycle de flash, on passe au prochaine état et on éteint la led
-		if(m_etape_flash==7)
+		etat_led_control->statut_erreur=true;
+		// Apres avoir clignotÃ© entre la led en VERT et en JAUNE  pendant 8 cycle de flash, on passe au prochaine Ã©tat et on Ã©teint la led
+		if(etat_led_control->m_etape_flash==7)
 		{
 			etat_led( NO_LIGHT);
-			m_etape_erreur++;
-			m_etape_flash=0;
+			etat_led_control->m_etape_erreur++;
+			etat_led_control->m_etape_flash=0;
 		}
-	// tant que les 8 cycles ne sont pas terminés la led est en rouge 
+	// tant que les 8 cycles ne sont pas terminÃ©s la led est en rouge 
 		else 
 		{
 			etat_led(RED);
@@ -135,20 +137,20 @@ void etat_update(int previous_led_flash/*, données controlleur*/)
 	}
 	else
 	{
-		m_etape_erreur++;
+		etat_led_control->m_etape_erreur++;
 	}
 
 
-			//ÉTAT le controle ne recoit pas de donnée de la télécommande  lumière jaune constante
-	if(m_etape_erreur==5 && SetNoComms())
+			//Ã‰TAT le controle ne recoit pas de donnÃ©e de la tÃ©lÃ©commande  lumiÃ¨re jaune constante
+	if(etat_led_control->m_etape_erreur==5 && SetNoComms())
 	{
-		statut_controlleur=0;
-		// Apres avoir clignoté entre la led en VERT et en JAUNE  pendant 8 cycle de flash, on passe au prochaine état
-		if(m_etape_flash==7)
+		etat_led_control->statut_erreur=0;
+		// Apres avoir clignotÃ© entre la led en VERT et en JAUNE  pendant 8 cycle de flash, on passe au prochaine Ã©tat
+		if(etat_led_control->m_etape_flash==7)
 		{
 			etat_led( NO_LIGHT);
-			m_etape_erreur++;
-			m_etape_flash=0;
+			etat_led_control->m_etape_erreur++;
+			etat_led_control->m_etape_flash=0;
 		}
 	
 		else 
@@ -158,75 +160,75 @@ void etat_update(int previous_led_flash/*, données controlleur*/)
 	}
 	else
 	{
-		m_etape_erreur++;
+		etat_led_control->m_etape_erreur++;
 	}
 
-	/*
-	//ÉTAT chassis a atteint la fin de course  clignotemnt vert et jaune
-	if(m_etape_erreur==4 && SetEndOfCourse())
+	
+	//Ã‰TAT chassis a atteint la fin de course  clignotemnt vert et jaune
+	if(etat_led_control->m_etape_erreur==4 && SetEndOfCourse())
 	{
-	statut_controlleur=0;
-		// Apres avoir clignoté entre la led en VERT et en JAUNE  pendant 8 cycle de flash, on passe au prochaine état
-		if(m_etape_flash==7)
+	etat_led_control->statut_erreur=true;
+		// Apres avoir clignotÃ© entre la led en VERT et en JAUNE  pendant 8 cycle de flash, on passe au prochaine Ã©tat
+		if(etat_led_control->m_etape_flash==7)
 		{
 				etat_led( NO_LIGHT);
-			m_etape_erreur++;
-			m_etape_flash=0;
+			etat_led_control->m_etape_erreur++;
+			etat_led_control->m_etape_flash=0;
 		}
-		else if(m_etape_flash %2==0)
+		else if(etat_led_control->m_etape_flash %2==0)
 		{
 			etat_led(GREEN);
 		}
-		else if(m_etape_flash %2==0)
+		else if(etat_led_control->m_etape_flash %2==0)
 		{
 			etat_led(YELLOW);
 		}
 	}
 	else
 	{
-		m_etape_erreur++;
+		etat_led_control->m_etape_erreur++;
 	}
 
 
-		//ÉTAT chassis ne peut aller à la distance voulu  clignotemnt jaune
-	if(m_etape_erreur==5 && SetCantGoSetPoint())
+		//Ã‰TAT chassis ne peut aller Ã  la distance voulu  clignotemnt jaune
+	if(etat_led_control->m_etape_erreur==5 && SetCantGoSetPoint())
 	{
-	statut_controlleur=0;
-		// Apres avoir clignoté  la led en JAUNE  pendant 8 cycle de flash, on passe au prochaine vérifie le prochain état et on éteint la led
-		if(m_etape_flash==7)
+	etat_led_control->statut_erreur=0;
+		// Apres avoir clignotÃ©  la led en JAUNE  pendant 8 cycle de flash, on passe au prochaine vÃ©rifie le prochain Ã©tat et on Ã©teint la led
+		if(etat_led_control->m_etape_flash==7)
 		{
 				etat_led( NO_LIGHT);
-			m_etape_erreur++;
-			m_etape_flash=0;
+			etat_led_control->m_etape_erreur++;
+			etat_led_control->m_etape_flash=0;
 		}
-		// permet de faire clignoter la led chaque flash partir, à chaque etape_flash pair c'est jaune
-		// à chaque etape_flash impair la led est éteinte
-		else if(m_etape_flash %2==0)
+		// permet de faire clignoter la led chaque flash partir, Ã  chaque etape_flash pair c'est jaune
+		// Ã  chaque etape_flash impair la led est Ã©teinte
+		else if(etat_led_control->m_etape_flash %2==0)
 		{
 			etat_led(YELLOW);
 		}
-		else if(m_etape_flash %2==1)
+		else if(etat_led_control->m_etape_flash %2==1)
 		{
 			etat_led(NO_LIGHT);
 		}
 	}
 	else
 	{
-		m_etape_erreur++;
+		etat_led_control->m_etape_erreur++;
 	}
-	*/
+	
 
-			// SÉTAT  Tout va bien est la led reste en vert
-	// si on est pas passé par  les erreurs alors tout va bien
-	if(m_etape_erreur==8 && statut_controlleur==1)
+			// SÃ‰TAT  Tout va bien est la led reste en vert
+	// si on est pas passÃ© par  les erreurs alors tout va bien
+	if(etat_led_control->m_etape_erreur==8 && etat_led_control->statut_erreur==1)
 	{
 		
-		// Apres que la led reste en vert  pendant 8 cycle de flash, on passe au prochaine état
-		if(m_etape_flash==7)
+		// Apres que la led reste en vert  pendant 8 cycle de flash, on passe au prochaine Ã©tat
+		if(etat_led_control->m_etape_flash==7)
 		{
 			etat_led( NO_LIGHT);
-			m_etape_erreur++;
-			m_etape_flash=0;
+			etat_led_control->m_etape_erreur++;
+			etat_led_control->m_etape_flash=0;
 		}
 	
 		else 
@@ -236,11 +238,18 @@ void etat_update(int previous_led_flash/*, données controlleur*/)
 	}
 	else
 	{
-		m_etape_erreur++;
+		etat_led_control->m_etape_erreur++;
 	}
 
+	
+	if(etat_led_control->m_etape_erreur>7)
+	{
+		etat_led_control->m_etape_erreur=1;
+	}
 
-
+	}
+	
+	
 	
 }
 
@@ -255,16 +264,16 @@ void etat_led(int color)
 	case RED : digitalWrite(PIN_LD_RED,ON);
 			  digitalWrite(PIN_LD_GREEN,OFF);
 				break;
-		//Allumer seulement lumière verte
+		//Allumer seulement lumiÃ¨re verte
 	case GREEN: digitalWrite(PIN_LD_RED,OFF);
 				 digitalWrite(PIN_LD_GREEN,ON);
 				 break;
 
-		//Allumer led rouge et vert pour lumière jaune
+		//Allumer led rouge et vert pour lumiÃ¨re jaune
 	case YELLOW: digitalWrite(PIN_LD_RED,ON);
 				 digitalWrite(PIN_LD_GREEN,ON);
 				 break;
-		//Éteindre toutes les lumières
+		//Ã‰teindre toutes les lumiÃ¨res
 	case NO_LIGHT: digitalWrite(PIN_LD_RED,OFF);
 				 digitalWrite(PIN_LD_GREEN,OFF);
 				 break;
@@ -272,7 +281,7 @@ void etat_led(int color)
 
 }
 
-// vérifie si le niveau de tension de la batterie est plus faible que la tension définit faible
+// vÃ©rifie si le niveau de tension de la batterie est plus faible que la tension dÃ©finit faible
 bool SetBattFaible(double tension_batterie)
 {
 	bool etat;
@@ -289,7 +298,7 @@ bool SetBattFaible(double tension_batterie)
 	return etat;
 }
 
-// vérifie si la temperaturede la batterie est plus faible que la temperature définit comme trop chaude
+// vÃ©rifie si la temperaturede la batterie est plus faible que la temperature dÃ©finit comme trop chaude
 bool SetBattTooHot(double temp_batterie)
 {
 	bool etat;
@@ -307,7 +316,7 @@ bool SetBattTooHot(double temp_batterie)
 }
 
 
-// vérifie si la temperaturede la batterie est plus faible que la temperature définit comme trop chaude
+// vÃ©rifie si la temperaturede la batterie est plus faible que la temperature dÃ©finit comme trop chaude
 bool SetObjectDetected(double distance_objet_detecte)
 {
 	bool etat;
@@ -327,13 +336,13 @@ bool SetObjectDetected(double distance_objet_detecte)
 
 
 
-// vérifie si la temperaturede la batterie est plus faible que la temperature définit comme trop chaude
-bool SetEmergencyStop(int arrêt_urgence)
+// vÃ©rifie si la temperaturede la batterie est plus faible que la temperature dÃ©finit comme trop chaude
+bool SetEmergencyStop(int arrÃªt_urgence)
 {
 	bool etat;
 
 	
-	if(arrêt_urgence==0)
+	if(arrÃªt_urgence==0)
 	{
 
 		etat= false;
@@ -346,7 +355,7 @@ bool SetEmergencyStop(int arrêt_urgence)
 }
 
 
-// vérifie si la temperaturede la batterie est plus faible que la temperature définit comme trop chaude
+// vÃ©rifie si la temperaturede la batterie est plus faible que la temperature dÃ©finit comme trop chaude
 bool SetNoComms(int statut_connexion_manette)
 {
 	bool etat;
@@ -362,4 +371,15 @@ bool SetNoComms(int statut_connexion_manette)
 		etat=true;
 	}
 	return etat;
+}
+
+//initialise etat_led
+t_etat_led_control initialiser_etat_led()
+{
+	t_etat_led_control init_etat_led;
+	init_etat_led.statut_erreur=false;
+	init_etat_led.m_etape_erreur=0;
+	init_etat_led.m_etape_flash=0;
+	init_etat_led.previous_led_flash;
+
 }
