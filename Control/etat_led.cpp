@@ -44,7 +44,7 @@ void etat_update(t_etat_led_control* etat_led_control/*, données controlleur*/)
 
 
 		// ÉTAT batterie faible , on va clignoté la lumière verte
-		if(etat_led_control->m_etape_erreur==1 && SetBattFaible())
+		if(etat_led_control->m_etape_erreur==1 && SetBattFaible(// double tension_batterien ))
 		{
 			// si la batterie est faible on met statut de l'erreur à 1 pour dire qu'il a bien un probleme qui a été detecté
 			etat_led_control->statut_erreur=true;
@@ -73,7 +73,7 @@ void etat_update(t_etat_led_control* etat_led_control/*, données controlleur*/)
 
 
 		// ÉTAT batterie trop chaude , on va clignoté la lumière rouge
-		if(etat_led_control->m_etape_erreur==2 && SetBattTooHot())
+		if(etat_led_control->m_etape_erreur==2 && SetBattTooHot(//double temp_batterie))
 		{
 			etat_led_control->statut_erreur=true;
 			// Apres avoir clignoté la led en rouge  pendant 8 cycle de flash, on passe au prochaine état
@@ -98,7 +98,7 @@ void etat_update(t_etat_led_control* etat_led_control/*, données controlleur*/)
 		}
 
 		// ÉTAT objet détecté , on va clignoté la led entre le vert et le rouge
-		if(etat_led_control->m_etape_erreur==3 && SetObjectDetected())
+		if(etat_led_control->m_etape_erreur==3 && SetObjectDetected(//double distance_objet_detecte))
 		{
 			etat_led_control->statut_erreur=true;
 			// Apres avoir clignoté entre la led en vert et en rouge pendant 8 cycle de flash, on passe au prochaine état
@@ -127,7 +127,7 @@ void etat_update(t_etat_led_control* etat_led_control/*, données controlleur*/)
 
 
 		//ÉTAT l'arret d'urgence a été enclenché  lumière rouge constante
-		if(etat_led_control->m_etape_erreur==4 && SetEmergencyStop())
+		if(etat_led_control->m_etape_erreur==4 && SetEmergencyStop(//int arrêt_urgence))
 		{
 			etat_led_control->statut_erreur=true;
 			// Apres avoir clignoté entre la led en VERT et en JAUNE  pendant 8 cycle de flash, on passe au prochaine état et on éteint la led
@@ -150,7 +150,7 @@ void etat_update(t_etat_led_control* etat_led_control/*, données controlleur*/)
 
 
 		//ÉTAT le controle ne recoit pas de donnée de la télécommande  lumière jaune constante
-		if(etat_led_control->m_etape_erreur==5 && SetNoComms())
+		if(etat_led_control->m_etape_erreur==5 && SetNoComms(//int statut_connexion_manette))
 		{
 			etat_led_control->statut_erreur=0;
 			// Apres avoir clignoté entre la led en VERT et en JAUNE  pendant 8 cycle de flash, on passe au prochaine état
