@@ -47,6 +47,9 @@ bool SetCantGoSetPoint(t_ledstate* ledstate);
 #define PIN_LD_RED 2
 
 
+//modifier les distances max dépendamment s'il commence en avant ou en arrière
+#define DISTANCE_AVANT_MAX 20 //distance en m
+#define DISTANCE_ARRIERE_MAX 20 // distance en m 
 /*
 
 
@@ -111,7 +114,8 @@ Paramètre d'entrée:
 Donnée retour de la fonction: variable boolean (Vrai= le chariot a atteint la fin de course/Faux= le chariot n'a pas atteint la fin de course)
 */
 
-	//bool SetEndOfCourse();// juste clarifier avec quoi l'évaluer
+	bool SetEndOfCourse(double distance_actuel);// on compare la distance actuel avec la distance max pour déterminer si la fin de course est atteint
+	// on laisse une marge de 0.5 m
 
 
 
@@ -122,7 +126,7 @@ Description:La fonction permet de vérifier si on  peut  atteindre la position d
 Paramètre d'entrée:  
 Donnée retour de la fonction: variable boolean (Vrai= le chariot ne peux atteindre le point voulu/Faux= le chariot peut atteint le point voulu)
 */
-//	bool SetCantGoSetPoint();// juste clarifier avec quoi l'évaluer
+	bool SetCantGoSetPoint(double distance_voulu); // on calcule pour vérifier si on peut atteindre la distance voulu
 
 
 
