@@ -24,13 +24,13 @@ bool SetCantGoSetPoint(t_ledstate* ledstate);
 
 /* tout d'abord, on va vérifier si le  temps  entre le dernier clignotement et a l'instant présent est plus grand que le délai prévu
 si c'est respecté on vérifie les erreurs. si une erreur est détecté alors on modifie le statut erreur à true.
-Si aucun erreur est détecté alors, on affiche l'etat tout va bien
+Si aucune erreur est détecté alors, on affiche l'etat tout va bien
 */
 void etat_update(t_etat_led_control* etat_led_control/*, données controlleur*/)
 {
 	long current_millis=millis();
 
-	// définit au déébut qu'il n'y a aucune erreur et vérifie s'il y en 
+	// définit au début qu'il n'y a aucune erreur 
 	etat_led_control->statut_erreur=false;
 
 	// si le temps entre le dernier flash et l'instant présent est plus grand que le délai défini, 
@@ -248,7 +248,7 @@ void etat_update(t_etat_led_control* etat_led_control/*, données controlleur*/)
 
 		if(etat_led_control->m_etape_erreur>7)
 		{
-			etat_led_control->m_etape_erreur=0;
+			etat_led_control->m_etape_erreur=1;
 		}
 
 	}
