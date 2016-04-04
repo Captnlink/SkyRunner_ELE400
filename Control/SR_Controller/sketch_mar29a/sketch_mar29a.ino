@@ -1,6 +1,7 @@
 #include "BrainControl.h"
 #include "SrEncodeur.h"
 #include "SrConfig.h"
+#include "SrCommunication.h"
 
 //Creation d'un port de communication serie software
 SoftwareSerial mySerial(10, 11); // RX, TX
@@ -12,6 +13,11 @@ Sabertooth SyrenDrive(SYREN_DRIVE_ADDR,mySerial);
 //On passe en parametre l'objet Drive
 BrainControl Controlleur(SyrenDrive);
 
+//Creation objet Communication
+CommXBee Xbee;
+
+long oldTime = 0;
+
 void setup() {
   Controlleur.SetPositionMax(1000); //Longeur du cable 1000 cm
 
@@ -22,7 +28,19 @@ void setup() {
 void loop() {
   //Update du controlleur
   Controlleur.Update();
+  
+  Xbee.ReceiveTramXbee();
+  if(Xbee.IsChangementConsigne(Controlleur)){
+    Xbee.UpdateConfiguration(Controlleur);
+    }
 
+  long newTime = millis();
+  if(newTime > (oldTime + 20)){
+    //Transmittion
+
+    oldTime = millis();
+  }
+  
   //Code du main ICI
   double temp   = Controlleur.GetTemperatureBaterie();
   double volt   = Controlleur.GetTensionBaterie();

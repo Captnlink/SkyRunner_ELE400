@@ -90,18 +90,18 @@ public:
 	bool SetAcceleration(int _acceleration);
 
 	//Getters
-	int GetVitesseVoulu		(){return mVitesseVoulu;}
-	int GetVitesseActuel	(){return mVitesseActuel;}
+	int GetVitesseVoulu(){return mVitesseVoulu;} const
+	int GetVitesseActuel(){return mVitesseActuel;} const
 
-	int GetPositionMax		(){return mPositionMax;}
-	int GetPositionActuel	(){return mPositionActuel;}
-	int GetDistanceAvant 	(){return mDistanceAvant;}
-	int GetDistanceArriere	(){return mDistanceArriere;}
+	int GetPositionMax(){return mPositionMax;} const
+	int GetPositionActuel(){return mPositionActuel;} const
+	int GetDistanceAvant(){return mDistanceAvant;} const
+	int GetDistanceArriere(){return mDistanceArriere;} const
 	
-	int GetAcceleration		(){return mAcceleration;}
+	int GetAcceleration(){return mAcceleration;} const
 
-	double GetTemperatureBaterie(){return mBatterie.GetTempratureCelsius();}
-	double GetTensionBaterie	(){return mBatterie.GetVoltage();}
+	double GetTemperatureBaterie(){return mBatterie.GetTempratureCelsius();} 
+	double GetTensionBaterie(){return mBatterie.GetVoltage();}  
 };
 
 #endif
