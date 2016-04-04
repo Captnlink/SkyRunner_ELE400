@@ -1,6 +1,5 @@
-
 /**
-    Project : CableCam_Chariot\n
+
     @file SrEncodeur.h
     @brief Recupere la vitesse et distance lineaire
 
@@ -27,24 +26,23 @@
 class SrEncodeur
 {
     public:
-        /** Default constructor */
         SrEncodeur();
-
         /** Update
          * @brief Mise a jour de la position et la vitesse selon les lectures de l'encodeur
          */
         void Update();
 
+		//Getters
         int GetPositionCm() { return mPositionCm; }
         double GetVitesse() { return mVitesseMoy; }
         int GetDirection() { return mDirecttion; }
 
     private:
-        Encoder EncodeurMecanique; //!< Objet "PositionCm"
+        Encoder EncodeurMecanique;
         long mOldPosition;
-        int mPositionCm; //!< Variable "PositionCm"
-        double mVitesseMoy; //!< Variable "VitesseMoy" Vitesse Moyenne
-        double mVitesseArray[SAMPLEVITESSE]; //!< Variable "VitesseArray" Vitesses pour la moyenne
+        int mPositionCm; 
+        double mVitesseMoy; 
+        double mVitesseArray[SAMPLEVITESSE]; 
         int mDirecttion;
 		    double oldTime;
 };

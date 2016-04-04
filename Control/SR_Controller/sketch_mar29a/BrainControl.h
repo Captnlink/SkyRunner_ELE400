@@ -29,19 +29,13 @@
     @brief Gere la securite automatique et le controle de la drive
 
     @author Captnlink
-    @version 1.9
+    @version 1.10
     @date March 30, 2016
 
     Gere le PID du controle de vitesse. Process les informations des capteurs et de l'interfaces
 	afin d'envoyer a la drive une consigne en tension.
 
 */
-
-#define TRIGGER_PIN_AVANT  12
-#define TRIGGER_PIN_ARRIERE  14
-#define ECHO_PIN_AVANT     11
-#define ECHO_PIN_ARRIERE     13
-#define MAX_DISTANCE 500
 
 class BrainControl
 {
@@ -81,20 +75,22 @@ public:
     */
     void Update();
 
-    bool SetArretUrgenge();
-    bool IsArretUrgence(){return arretUrgence;}
 
 	//Setters
+	bool SetArretUrgenge();
 	void SetVitesseVoulu(int _vitesseVoulu);
 	void SetPositionMax(int _positionMax){mPositionMax = _positionMax;}
 	bool SetAcceleration(int _acceleration);
 
 	//Getters
+    bool IsArretUrgence(){return arretUrgence;} const
+	
 	int GetVitesseVoulu(){return mVitesseVoulu;} const
 	int GetVitesseActuel(){return mVitesseActuel;} const
-
+	
 	int GetPositionMax(){return mPositionMax;} const
 	int GetPositionActuel(){return mPositionActuel;} const
+	
 	int GetDistanceAvant(){return mDistanceAvant;} const
 	int GetDistanceArriere(){return mDistanceArriere;} const
 	

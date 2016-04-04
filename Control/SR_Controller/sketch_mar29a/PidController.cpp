@@ -10,9 +10,9 @@ PidController::PidController()
 	//Default Configuration
 	iMax = 1000;
 	iMin = -1000;
-	iGain = 0;
-	pGain = 1;
-	dGain = 0;
+	iGain = INTEGRAL_GAIN;
+	pGain = PROPORTIONAL_GAIN;
+	dGain = DERIVATIVE_GAIN;
 }
 
 

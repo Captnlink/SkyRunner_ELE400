@@ -8,11 +8,9 @@ CommXBee::CommXBee(){
 	
 	manetteAdresse=-1;
 	
-	// Variables pour la trame de contrôle
 	vitesse=0;
 	arretUrgence=0;
 	
-	// Variables pour la trame de configuration
 	acceleration=0;
 	longueurCable=0;
 	
@@ -22,7 +20,7 @@ CommXBee::CommXBee(){
 	}
 
 void CommXBee::TransmitionTramXbee(BrainControl& Controlleur){
-	tramToSend = "";
+	tramToSend = ""; //Reset Tram
 	tramToSend += "STA";
 	tramToSend += lowByte((int)Controlleur.GetTensionBaterie());
 	tramToSend += highByte(Controlleur.GetPositionActuel());
@@ -48,10 +46,11 @@ void CommXBee::ReceiveTramXbee(){
 		CommXBee::ResetCommVariable();
 	
 		msg[0]=Serial.read();
-		
 		if(msg[0] != 'C') return;
 		
 		msg[1]=Serial.read();
+		if(msg[0] != 'N') return;
+		
 		msg[2]=Serial.read();
 
 		SOF += msg[0];
@@ -77,14 +76,10 @@ void CommXBee::ReceiveTramXbee(){
 		CommXBee::ResetCommVariable();
 	
 		msg[0]=Serial.read();
-		
-		if(msg[0] != 'C') return;
-		if(msg[0] != 'D') return;
+		if(msg[0] != 'C' && msg[0] != 'D') return;
 		
 		msg[1]=Serial.read();
-		
-		if(msg[0] != 'N') return;
-		if(msg[0] != 'T') return;
+		if(msg[1] != 'N' && msg[1] != 'C') return;
 		
 		msg[2]=Serial.read();
 
@@ -119,7 +114,7 @@ void CommXBee::ReceiveTramXbee(){
 			}
 			return;
 		}		
-		if(SOF == "CNF"){
+		if(SOF == "DCX"){
 			msg[3]=Serial.read(); //Byte pour adresse
 			msg[4]=Serial.read(); //Byte pour CheckSum
 			
@@ -139,7 +134,6 @@ void CommXBee::ResetCommVariable(){
 	for(int i = 0; i < 10; i++){msg[i] = 0;}
 }
 
-//http://projectsfromtech.blogspot.ca/2013/09/combine-2-bytes-into-int-on-arduino.html
 int CommXBee::BitShiftCombine( unsigned char x_high, unsigned char x_low)
 {
   int combined;

@@ -1,10 +1,27 @@
+/**
+ * 
+ * @author CaptnLink
+ * @email  samuel.geoffroy.92@gmail.com
+ * 
+ * @author Wsmon
+ * @email  
+ * 
+ * @author khchu
+ * @email  
+ * 
+ * @author Antoine Champoux
+ * @email  
+ * @ide    Arduino IDE 1.6.7
+ */
+
+
 #include "BrainControl.h"
 #include "SrEncodeur.h"
 #include "SrConfig.h"
 #include "SrCommunication.h"
 
 //Creation d'un port de communication serie software
-SoftwareSerial mySerial(10, 11); // RX, TX
+SoftwareSerial mySerial(SYREN_PIN_RX, SYREN_PIN_TX); // RX, TX
 
 //Creation objet Drive
 Sabertooth SyrenDrive(SYREN_DRIVE_ADDR,mySerial);
@@ -36,25 +53,8 @@ void loop() {
 
   long newTime = millis();
   if(newTime > (oldTime + 20)){
-    //Transmittion
-
+    Xbee.TransmitionTramXbee(Controlleur);
     oldTime = millis();
   }
-  
-  //Code du main ICI
-  double temp   = Controlleur.GetTemperatureBaterie();
-  double volt   = Controlleur.GetTensionBaterie();
-  //double vitesse   = Controlleur.GetVitesseActuel();
-  int _position = Controlleur.GetPositionActuel();
-
-  Serial.print("Temperature = ");
-  Serial.println(temp);
-  Serial.print("Voltage     = ");
-  Serial.println(volt);
-  //Serial.print("Vitesse     = ");
-  //Serial.println(vitesse);
-  Serial.print("Position    = ");
-  Serial.println(_position);
-  delay(600);
 }
 

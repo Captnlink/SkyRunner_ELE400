@@ -2,8 +2,8 @@
 
 BrainControl::BrainControl(Sabertooth _SyrenDrive):
 	SyrenDrive(_SyrenDrive.address(),_SyrenDrive.port()),
- CapteurDistanceAvant(TRIGGER_PIN_AVANT, ECHO_PIN_AVANT, MAX_DISTANCE),
-  CapteurDistanceArriere(TRIGGER_PIN_ARRIERE, ECHO_PIN_ARRIERE, MAX_DISTANCE){
+	CapteurDistanceAvant(TRIGGER_PIN_AVANT, ECHO_PIN_AVANT, MAX_DISTANCE),
+	CapteurDistanceArriere(TRIGGER_PIN_ARRIERE, ECHO_PIN_ARRIERE, MAX_DISTANCE){
 
 	mPositionActuel=0;
 	mPositionMax=0;

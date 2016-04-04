@@ -1,6 +1,6 @@
 #include "SrEncodeur.h"
 
-SrEncodeur::SrEncodeur():EncodeurMecanique(2, 3)
+SrEncodeur::SrEncodeur():EncodeurMecanique(ENCODEUR_PIN_A, ENCODEUR_PIN_B)
 {
     mOldPosition = -999;
     mVitesseArray[SAMPLEVITESSE] = {0};

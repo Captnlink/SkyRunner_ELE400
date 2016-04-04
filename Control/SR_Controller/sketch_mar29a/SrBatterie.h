@@ -1,15 +1,10 @@
 /**
-    Project : CableCam_Chariot\n
     @file SrBatterie.h
-    @brief Recupere la temperature de la thermistance et la tension de la batterie
+    @brief Contient la classe batterie
 
     @author Captnlink
-
     @version 1.3
     @date March 20, 2016
-
-    @warning Il y a un delai(10) (10 ms) dans la fonction GetSample().
-    Il serai important de trouver un autre moyen de faire l'acquisition des donnees
 */
 
 #ifndef THERMISTANCE_H_
@@ -20,14 +15,17 @@
 
 /**
     @class Batterie SrBatterie.h
-    @brief Permet l'acquisition d'une valeur de temperature
+    @brief Permet l'acquisition d'une valeur de temperature et de voltage
 
     @author Captnlink
 
     @version 1.3
     @date March 20, 2016
 
-	  La librairie a ete originalement cree par Lady Ada
+	@warning Il y a un delai(10) (10 ms) dans la fonction GetSample().
+	
+	Permet de recuperer une valeur analogique et de la transformer en temperature ou voltage selon la pin utilise.
+	La librairie utilise pour recuperer la temperature a ete originalement cree par Lady Ada.
 */
 class Batterie
 {
