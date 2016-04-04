@@ -4,16 +4,12 @@ Project : CableCam_Chariot\n
 @brief Gèrent la LED d'information selon les erreurs et warnings du systeme
 @author Captnlink
 @author Wsimon
-
 @version 1.0
 @date March 20, 2016
 Afin de visualiser les problèmes pouvant survenir à l'intérieur du controlleur
 et les états à problèmes, cette class permet donc de gérer la LED.
-
-
 Il reste à vérifier la struct controller pour pouvoir utiliser les divers variables
 et à mieux définir les états pour vérifier le statut 
-
 bool SetEndOfCourse(t_ledstate* ledstate);	 // Etat: Chariot atteint Fin de course  -> led clignote entre le vert et le jaune
 bool SetCantGoSetPoint(t_ledstate* ledstate);
 */
@@ -44,7 +40,7 @@ void etat_update(t_etat_led_control* etat_led_control/*, données controlleur*/)
 
 
 		// ÉTAT batterie faible , on va clignoté la lumière verte
-		if(etat_led_control->m_etape_erreur==1 && SetBattFaible())
+		if(etat_led_control->m_etape_erreur==1 && SetBattFaible(//double tension_batterie))
 		{
 			// si la batterie est faible on met statut de l'erreur à 1 pour dire qu'il a bien un probleme qui a été detecté
 			etat_led_control->statut_erreur=true;
@@ -73,7 +69,7 @@ void etat_update(t_etat_led_control* etat_led_control/*, données controlleur*/)
 
 
 		// ÉTAT batterie trop chaude , on va clignoté la lumière rouge
-		if(etat_led_control->m_etape_erreur==2 && SetBattTooHot())
+		if(etat_led_control->m_etape_erreur==2 && SetBattTooHot(//double temp_batterie))
 		{
 			etat_led_control->statut_erreur=true;
 			// Apres avoir clignoté la led en rouge  pendant 8 cycle de flash, on passe au prochaine état
@@ -98,7 +94,7 @@ void etat_update(t_etat_led_control* etat_led_control/*, données controlleur*/)
 		}
 
 		// ÉTAT objet détecté , on va clignoté la led entre le vert et le rouge
-		if(etat_led_control->m_etape_erreur==3 && SetObjectDetected())
+		if(etat_led_control->m_etape_erreur==3 && SetObjectDetected(//double distance_objet_detecte))
 		{
 			etat_led_control->statut_erreur=true;
 			// Apres avoir clignoté entre la led en vert et en rouge pendant 8 cycle de flash, on passe au prochaine état
@@ -127,7 +123,7 @@ void etat_update(t_etat_led_control* etat_led_control/*, données controlleur*/)
 
 
 		//ÉTAT l'arret d'urgence a été enclenché  lumière rouge constante
-		if(etat_led_control->m_etape_erreur==4 && SetEmergencyStop())
+		if(etat_led_control->m_etape_erreur==4 && SetEmergencyStop(//int arrêt_urgence))
 		{
 			etat_led_control->statut_erreur=true;
 			// Apres avoir clignoté entre la led en VERT et en JAUNE  pendant 8 cycle de flash, on passe au prochaine état et on éteint la led
@@ -150,7 +146,7 @@ void etat_update(t_etat_led_control* etat_led_control/*, données controlleur*/)
 
 
 		//ÉTAT le controle ne recoit pas de donnée de la télécommande  lumière jaune constante
-		if(etat_led_control->m_etape_erreur==5 && SetNoComms())
+		if(etat_led_control->m_etape_erreur==5 && SetNoComms(//int statut_connexion_manette))
 		{
 			etat_led_control->statut_erreur=0;
 			// Apres avoir clignoté entre la led en VERT et en JAUNE  pendant 8 cycle de flash, on passe au prochaine état
@@ -173,7 +169,7 @@ void etat_update(t_etat_led_control* etat_led_control/*, données controlleur*/)
 
 
 		//ÉTAT chassis a atteint la fin de course  clignotemnt vert et jaune
-		if(etat_led_control->m_etape_erreur==4 && SetEndOfCourse())
+		if(etat_led_control->m_etape_erreur==6 && SetEndOfCourse(//double distance_actuel))
 		{
 			etat_led_control->statut_erreur=true;
 			// Apres avoir clignoté entre la led en VERT et en JAUNE  pendant 8 cycle de flash, on passe au prochaine état
@@ -199,7 +195,7 @@ void etat_update(t_etat_led_control* etat_led_control/*, données controlleur*/)
 
 
 		//ÉTAT chassis ne peut aller à la distance voulu  clignotemnt jaune
-		if(etat_led_control->m_etape_erreur==5 && SetCantGoSetPoint())
+		if(etat_led_control->m_etape_erreur==7 && SetCantGoSetPoint(//double distance_voulu))
 		{
 			etat_led_control->statut_erreur=0;
 			// Apres avoir clignoté  la led en JAUNE  pendant 8 cycle de flash, on passe au prochaine vérifie le prochain état et on éteint la led
@@ -379,7 +375,42 @@ bool SetNoComms(int statut_connexion_manette)
 		etat=true;
 	}
 	return etat;
+
+
 }
+
+bool SetEndOfCourse(double distance_actuel)
+{
+	double distance_max;
+	bool etat;
+
+	//si on a 50cm A LA FIN a gauche ou a la fin a droite ,alors on considère qu'on a atteint la fin 
+	if(DISTANCE_AVANT_MAX-distance_actuel<0.5 ||DISTANCE_ARRIERE_MAX-distance_actuel<0.5 )
+	{
+		etat= true;
+	}
+	else
+	{
+		etat=false;
+	}
+	return etat;
+
+}
+
+bool SetCantGoSetPoint(double distance_voulu)
+{
+	bool etat;
+	if(distance_voulu> DISTANCE_AVANT_MAX || distance_voulu> DISTANCE_ARRIERE_MAX)
+	{
+		etat=true;
+	}
+	else
+	{
+		etat=false;
+	}
+	return etat
+}
+
 
 //initialise etat_led
 t_etat_led_control initialiser_etat_led()

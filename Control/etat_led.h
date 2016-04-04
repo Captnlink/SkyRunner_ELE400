@@ -111,7 +111,7 @@ Paramètre d'entrée:
 Donnée retour de la fonction: variable boolean (Vrai= le chariot a atteint la fin de course/Faux= le chariot n'a pas atteint la fin de course)
 */
 
-	//bool SetEndOfCourse();// juste clarifier avec quoi l'évaluer
+	bool SetEndOfCourse();// juste clarifier avec quoi l'évaluer
 
 
 
@@ -122,7 +122,7 @@ Description:La fonction permet de vérifier si on  peut  atteindre la position d
 Paramètre d'entrée:  
 Donnée retour de la fonction: variable boolean (Vrai= le chariot ne peux atteindre le point voulu/Faux= le chariot peut atteint le point voulu)
 */
-//	bool SetCantGoSetPoint();// juste clarifier avec quoi l'évaluer
+	bool SetCantGoSetPoint();// juste clarifier avec quoi l'évaluer
 
 
 
