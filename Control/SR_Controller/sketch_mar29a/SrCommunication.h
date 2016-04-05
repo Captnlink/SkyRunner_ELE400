@@ -15,6 +15,7 @@
 #include "Arduino.h"
 #include "SrConfig.h"
 #include "BrainControl.h"
+#include "EtatLed.h"
 
 /**
     @class CommXBee
@@ -33,12 +34,12 @@ public:
 	/** ReceiveTramXbee
 	 * @brief Recois la trame de communication du Xbee
 	 */
-	void ReceiveTramXbee();
+	void ReceiveTramXbee(BrainControl& _Controlleur);
 	/** TransmitionTramXbee
 	 * @brief Prend les informations du controlleur et les envoient au port Serie
 	 * @param Controlleur: Objet de classe BrainControl
 	 */
-	void TransmitionTramXbee(BrainControl& Controlleur);
+	void TransmitionTramXbee(BrainControl& Controlleur, EtatLed& LED);
 	/** IsChangementConsigne
 	 * @brief Verifie s'il y a changement de configuration
 	 * @param Controlleur: Objet de classe BrainControl
@@ -52,6 +53,7 @@ public:
 	void UpdateConfiguration(BrainControl& _Controlleur);
 	
 	//Getters
+  bool IsConnected(){return connexion;}
 	bool IsArretUrgence(){return arretUrgence;}
 	int GetVitesse(){return vitesse;}
 	int GetAcceleration(){return acceleration;}
@@ -59,7 +61,7 @@ public:
 
 private:
 	String tramToSend;
-	char msg[10];
+	char msg[14];
 	bool connexion;
 	
 	int manetteAdresse;

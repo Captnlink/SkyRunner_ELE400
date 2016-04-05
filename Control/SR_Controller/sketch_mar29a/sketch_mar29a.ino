@@ -14,6 +14,21 @@
  * @ide    Arduino IDE 1.6.7
  */
 
+/*
+Tram de connection addr:122
+CXNzc
+
+Tram de Deconexion addr:122
+DCXzY
+
+Tram de config addr:122 accel:121 Longeur 12048
+CNFzyx0r
+
+Tram de control addr:122 vit:122 ArretDurgence:122
+CNTzzzS
+*/
+
+
 
 #include "BrainControl.h"
 #include "SrEncodeur.h"
@@ -33,11 +48,12 @@ BrainControl Controlleur(SyrenDrive);
 //Creation objet Communication
 CommXBee Xbee;
 
-long oldTime = 0;
+//Creation objet Leds
+EtatLed LED;
 
+long oldTimeTransmition = 0;
+long oldTimeState = 0;
 void setup() {
-  Controlleur.SetPositionMax(1000); //Longeur du cable 1000 cm
-
   Serial.begin(9600);   //Communication Serie Hardware - XBee
   mySerial.begin(9600); //Communication Serie Software - Drive
 }
@@ -46,15 +62,26 @@ void loop() {
   //Update du controlleur
   Controlleur.Update();
   
-  Xbee.ReceiveTramXbee();
-  if(Xbee.IsChangementConsigne(Controlleur)){
-    Xbee.UpdateConfiguration(Controlleur);
-    }
-
+  Xbee.ReceiveTramXbee(Controlleur);
+  
   long newTime = millis();
-  if(newTime > (oldTime + 20)){
-    Xbee.TransmitionTramXbee(Controlleur);
-    oldTime = millis();
+  if(newTime > (oldTimeState + 100)){
+
+    LED.SetBattFaible(Controlleur.GetTensionBaterie());
+    LED.SetBattTooHot(Controlleur.GetTemperatureBaterie());
+    LED.SetObjectDetected(Controlleur.GetDistanceAvant(),Controlleur.GetDistanceArriere());
+    LED.SetEndOfCourse(Controlleur.GetPositionMax(), Controlleur.GetPositionActuel());
+    LED.SetCantGoSetPoint(Controlleur.GetVitesseActuel() , Controlleur.GetVitesseVoulu());
+    LED.SetEmergencyStop(Controlleur.IsArretUrgence());
+    LED.SetNoComms(Xbee.IsConnected());
+    
+    LED.UpdateLedState();
+    oldTimeState = millis();
+  }
+  
+  if(newTime > (oldTimeTransmition + 500)){
+    Xbee.TransmitionTramXbee(Controlleur, LED);
+    oldTimeTransmition = millis();
   }
 }
 

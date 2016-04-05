@@ -41,6 +41,8 @@
 
 #include "SoftwareSerial.h"
 
+#define DEBUG 1
+
 //Choix de Pins
 //SERIAL PIN XBEE 0
 //SERIAL PIN XBEE 1
@@ -91,5 +93,10 @@
 #define PROPORTIONAL_GAIN 1
 #define INTEGRAL_GAIN 0
 #define DERIVATIVE_GAIN 0
+
+//Parametre par default
+#define DEFAULT_VITESSE_VOULU 97
+#define DEFAULT_ACCELERATION 97
+#define DEFAULT_POSITION_MAX 0x7830
 
 #endif

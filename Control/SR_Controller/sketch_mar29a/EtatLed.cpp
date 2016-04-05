@@ -1,13 +1,17 @@
+#include "EtatLed.h"
+
 EtatLed::EtatLed(){
-	ledActualState = 0; //État de la LED (Allumé ou éteinte)
-	controllerState = 0; //État du controlleur
+	flashLedState = 0; //ï¿½tat de la LED (Allumï¿½ ou ï¿½teinte)
+  errorState = 0;
+  oldTime = 0;
+	SetGood(true);
 }
 
 
 #define BATTERIE_LOW 12
-#define TEMP_BATT_TOO_HOT
+#define TEMP_BATT_TOO_HOT 40
 
-//Délai du cycle pour regarder l'état des led et aussi délai de  clignotement
+//Dï¿½lai du cycle pour regarder l'ï¿½tat des led et aussi dï¿½lai de  clignotement
 #define DELAY_ETAT_LED 250
 
 // Statut des led pour les switch case pour fonction etat-led
@@ -46,12 +50,12 @@ bool EtatLed::UpdateLedState(/*State of Controler*/){
 		if(errorState== 0 && (STATE_GOOD & controllerState)){
 			if(flashLedState == 7) {
 				ChangeLedColor(NO_LIGHT);
-				errorState++; // modifie etape _erreur pour vérifier la prochaine erreur détecté
-				flashLedState=0; // remet à 0 le cycle de clignotement
+				errorState++; // modifie etape _erreur pour vï¿½rifier la prochaine erreur dï¿½tectï¿½
+				flashLedState=0; // remet ï¿½ 0 le cycle de clignotement
 			}
 			else {
 				ChangeLedColor(GREEN);
-				flashLedState++; // modifie etape _erreur pour vérifier la prochaine erreur détecté
+				flashLedState++; // modifie etape _erreur pour vï¿½rifier la prochaine erreur dï¿½tectï¿½
 			}
 		}
 		
@@ -72,7 +76,7 @@ bool EtatLed::UpdateLedState(/*State of Controler*/){
 		}
 		
 		if(errorState== 2 && (STATE_HOTBATT & controllerState)){
-			switch(){
+			switch(flashLedState){
 				case 0:
 					ChangeLedColor(RED);
 					flashLedState++;
@@ -102,7 +106,7 @@ bool EtatLed::UpdateLedState(/*State of Controler*/){
 		}
 		
 		if(errorState== 3 && (STATE_OBJDETECT & controllerState)){
-			switch(){
+			switch(flashLedState){
 				case 0:
 					ChangeLedColor(YELLOW);
 					flashLedState++;
@@ -164,33 +168,33 @@ bool EtatLed::UpdateLedState(/*State of Controler*/){
 		if(errorState== 6 && (STATE_EMERGENCY & controllerState)){
 			if(flashLedState == 7) {
 				ChangeLedColor(NO_LIGHT);
-				errorState++; // modifie etape _erreur pour vérifier la prochaine erreur détecté
-				flashLedState=0; // remet à 0 le cycle de clignotement
+				errorState++; // modifie etape _erreur pour vï¿½rifier la prochaine erreur dï¿½tectï¿½
+				flashLedState=0; // remet ï¿½ 0 le cycle de clignotement
 			}
 			else {
 				ChangeLedColor(RED);
-				flashLedState++; // modifie etape _erreur pour vérifier la prochaine erreur détecté
+				flashLedState++; // modifie etape _erreur pour vï¿½rifier la prochaine erreur dï¿½tectï¿½
 			}
 		}
 		if(errorState== 7 && (STATE_NOCOMMS & controllerState)){
 			if(flashLedState == 7) {
 				ChangeLedColor(NO_LIGHT);
-				errorState++; // modifie etape _erreur pour vérifier la prochaine erreur détecté
-				flashLedState=0; // remet à 0 le cycle de clignotement
+				errorState++; // modifie etape _erreur pour vï¿½rifier la prochaine erreur dï¿½tectï¿½
+				flashLedState=0; // remet ï¿½ 0 le cycle de clignotement
 			}
 			else {
 				ChangeLedColor(YELLOW);
-				flashLedState++; // modifie etape _erreur pour vérifier la prochaine erreur détecté
+				flashLedState++; // modifie etape _erreur pour vï¿½rifier la prochaine erreur dï¿½tectï¿½
 			}
 		}
 		if(errorState== 8){
 			ChangeLedColor(NO_LIGHT);
 			if(flashLedState == 7) {
-				errorState++; // modifie etape _erreur pour vérifier la prochaine erreur détecté
-				flashLedState=0; // remet à 0 le cycle de clignotement
+				errorState++; // modifie etape _erreur pour vï¿½rifier la prochaine erreur dï¿½tectï¿½
+				flashLedState=0; // remet ï¿½ 0 le cycle de clignotement
 			}
 			else {
-				flashLedState++; // modifie etape _erreur pour vérifier la prochaine erreur détecté
+				flashLedState++; // modifie etape _erreur pour vï¿½rifier la prochaine erreur dï¿½tectï¿½
 			}
 		}
 	}
@@ -203,24 +207,24 @@ void EtatLed::ChangeLedColor(int color)
 	{
 		//Allumer seulement led rouge
 	case RED : 
-		digitalWrite(PIN_LD_RED,ON);
-		digitalWrite(PIN_LD_GREEN,OFF);
+		digitalWrite(PIN_LD_RED,HIGH);
+		digitalWrite(PIN_LD_GREEN,LOW);
 		break;
-		//Allumer seulement lumière verte
+		//Allumer seulement lumiï¿½re verte
 	case GREEN: 
-		digitalWrite(PIN_LD_RED,OFF);
-		digitalWrite(PIN_LD_GREEN,ON);
+		digitalWrite(PIN_LD_RED,LOW);
+		digitalWrite(PIN_LD_GREEN,HIGH);
 		break;
 
-		//Allumer led rouge et vert pour lumière jaune
+		//Allumer led rouge et vert pour lumiï¿½re jaune
 	case YELLOW: 
-		digitalWrite(PIN_LD_RED,ON);
-		digitalWrite(PIN_LD_GREEN,ON);
+		digitalWrite(PIN_LD_RED,HIGH);
+		digitalWrite(PIN_LD_GREEN,HIGH);
 		break;
-		//Éteindre toutes les lumières
+		//ï¿½teindre toutes les lumiï¿½res
 	case NO_LIGHT: 
-		digitalWrite(PIN_LD_RED,OFF);
-		digitalWrite(PIN_LD_GREEN,OFF);
+		digitalWrite(PIN_LD_RED,LOW);
+		digitalWrite(PIN_LD_GREEN,LOW);
 		break;
 	}
 }
@@ -229,11 +233,11 @@ bool EtatLed::SetGood(bool state){
 	if(state)
 	{
 		controllerState = controllerState & STATE_GOOD;
-		return = true;
+		return true;
 	}
 	else
 	{
-		return = false;
+		return false;
 	}
 }
 
@@ -241,12 +245,12 @@ bool EtatLed::SetBattFaible(double tensionBatterie){
 	if(tensionBatterie<BATTERIE_LOW)
 	{
 		controllerState = controllerState | STATE_LOWBATT;
-		return = true;
+		return true;
 	}
 	else
 	{
 		controllerState = controllerState & ~STATE_LOWBATT;
-		return = false;
+		return false;
 	}
 }
 
@@ -254,25 +258,25 @@ bool EtatLed::SetBattTooHot(double tempBatterie){
 	if(tempBatterie<TEMP_BATT_TOO_HOT)
 	{
 		controllerState = controllerState | STATE_HOTBATT;
-		return = true;
+		return true;
 	}
 	else
 	{
 		controllerState = controllerState & ~STATE_HOTBATT;
-		return = false;
+		return false;
 	}
 }
 
-bool EtatLed::SetObjectDetected(int distanceObjetDetecte){
-	if(distanceObjetDetecte != -1 )
+bool EtatLed::SetObjectDetected(int distanceObjetDetecteAvant, int distanceObjetDetecteArriere){
+	if(distanceObjetDetecteAvant != -1 || distanceObjetDetecteArriere != -1)
 	{
 		controllerState = controllerState | STATE_OBJDETECT;
-		return = true;
+		return true;
 	}
 	else
 	{
 		controllerState = controllerState & ~STATE_OBJDETECT;
-		return = false;
+		return false;
 	}
 
 }
@@ -281,12 +285,12 @@ bool EtatLed::SetEndOfCourse(int positionActuel, int PositionMax){
 	if(PositionMax - MAX_POSITION_LV_5 < positionActuel || MAX_POSITION_LV_5 > positionActuel)
 	{
 		controllerState = controllerState | STATE_ENDCOURSE;
-		return = true;
+		return true;
 	}
 	else
 	{
 		controllerState = controllerState & ~STATE_ENDCOURSE;
-		return = false;
+		return false;
 	}
 }
 
@@ -294,12 +298,12 @@ bool EtatLed::SetCantGoSetPoint(int vitesseActuel, int vitesseVoulu){
 	if(vitesseVoulu > vitesseActuel)
 	{
 		controllerState = controllerState | STATE_NOSETPOINT;
-		return = true;
+		return true;
 	}
 	else
 	{
 		controllerState = controllerState & ~STATE_NOSETPOINT;
-		return = false;
+		return false;
 	}
 }
 
@@ -307,12 +311,12 @@ bool EtatLed::SetEmergencyStop(bool state){
 	if(state)
 	{
 		controllerState = controllerState | STATE_EMERGENCY;
-		return = true;
+		return true;
 	}
 	else
 	{
 		controllerState = controllerState & ~STATE_EMERGENCY;
-		return = false;
+		return false;
 	}
 }
 
@@ -320,11 +324,11 @@ bool EtatLed::SetNoComms(bool state){
 	if(state)
 	{
 		controllerState = controllerState | STATE_NOCOMMS;
-		return = true;
+		return true;
 	}
 	else
 	{
 		controllerState = controllerState & ~STATE_NOCOMMS;
-		return = false;
+		return false;
 	}
 }

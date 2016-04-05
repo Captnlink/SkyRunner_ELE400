@@ -6,18 +6,18 @@ BrainControl::BrainControl(Sabertooth _SyrenDrive):
 	CapteurDistanceArriere(TRIGGER_PIN_ARRIERE, ECHO_PIN_ARRIERE, MAX_DISTANCE){
 
 	mPositionActuel=0;
-	mPositionMax=0;
+	mPositionMax=DEFAULT_POSITION_MAX;
 	mVitesseActuel=0;
-	mVitesseVoulu=0;
+	mVitesseVoulu=DEFAULT_VITESSE_VOULU;
 	mDistanceAvant = 0;
 	mDistanceArriere = 0;
 	mOutputPID = 0;
-	mAcceleration=0; 
-	arretUrgence = true;
+	mAcceleration=DEFAULT_ACCELERATION; 
+	arretUrgence = false;
 }
 
-bool BrainControl::SetArretUrgenge(){
-    arretUrgence = true;
+bool BrainControl::SetArretUrgenge(bool _urg){
+    arretUrgence = _urg;
     return arretUrgence;
 }
 
@@ -47,7 +47,9 @@ void BrainControl::Update(){
 //_vitessevoulu en cm/sec
 void BrainControl::SetVitesseVoulu(int _vitesseVoulu)
 {
-    if(!arretUrgence)
+  mVitesseVoulu = _vitesseVoulu;
+  /*
+    if(arretUrgence)
     {
         if(mVitesseActuel > 0)
         {
@@ -55,35 +57,35 @@ void BrainControl::SetVitesseVoulu(int _vitesseVoulu)
             if((mPositionMax - MAX_POSITION_LV_1 < mPositionActuel) || 
 					(mDistanceAvant < MAX_POSITION_LV_1 && (mDistanceAvant != -1) ) )
             {
-                mVitesseVoulu = 0; /*Set vitesse _vitesse */
+                mVitesseVoulu = 0; //Set vitesse _vitesse 
             }
 			//Si le bolide arrive entre 1m et 2m de la fin OU un objet
             else if((mPositionMax - MAX_POSITION_LV_2 < mPositionActuel && mPositionActuel < mPositionMax - MAX_POSITION_LV_1)|| 
 					(MAX_POSITION_LV_1 < mDistanceAvant && mDistanceAvant < MAX_POSITION_LV_2) )
             {
-                if(_vitesseVoulu > MAX_VITESSE_1) _vitesseVoulu = MAX_VITESSE_1;/*Set Vitesse top*/
-                else mVitesseVoulu = _vitesseVoulu; /*Set vitesse _vitesse */
+                if(_vitesseVoulu > MAX_VITESSE_1) _vitesseVoulu = MAX_VITESSE_1;//Set Vitesse top
+                else mVitesseVoulu = _vitesseVoulu; //Set vitesse _vitesse 
             }
 			//Si le bolide arrive entre 2m et 3m de la fin OU un objet
             else if((mPositionMax - MAX_POSITION_LV_3 < mPositionActuel && mPositionActuel < mPositionMax - MAX_POSITION_LV_2)|| 
 					(MAX_POSITION_LV_2 < mDistanceAvant && mDistanceAvant < MAX_POSITION_LV_3) )
             {
-                if(_vitesseVoulu > MAX_VITESSE_2) _vitesseVoulu = MAX_VITESSE_2;/*Set Vitesse top*/
-                else mVitesseVoulu = _vitesseVoulu; /*Set vitesse _vitesse */
+                if(_vitesseVoulu > MAX_VITESSE_2) _vitesseVoulu = MAX_VITESSE_2;//Set Vitesse top
+                else mVitesseVoulu = _vitesseVoulu; //Set vitesse _vitesse
             }
 			//Si le bolide arrive entre 3m et 4m de la fin OU un objet
             else if((mPositionMax - MAX_POSITION_LV_4 < mPositionActuel && mPositionActuel < mPositionMax - MAX_POSITION_LV_3)|| 
 					(MAX_POSITION_LV_3 < mDistanceAvant && mDistanceAvant < MAX_POSITION_LV_4) )
             {
-                if(_vitesseVoulu > MAX_VITESSE_3) _vitesseVoulu = MAX_VITESSE_3;/*Set Vitesse top*/
-                else mVitesseVoulu = _vitesseVoulu; /*Set vitesse _vitesse */
+                if(_vitesseVoulu > MAX_VITESSE_3) _vitesseVoulu = MAX_VITESSE_3;//Set Vitesse top
+                else mVitesseVoulu = _vitesseVoulu; //Set vitesse _vitesse
             }
 			//Si le bolide arrive a 4m de la fin OU un objet
             else if((mPositionMax - MAX_POSITION_LV_5 < mPositionActuel && mPositionActuel < mPositionMax - MAX_POSITION_LV_4)|| 
 				( MAX_POSITION_LV_4 < mDistanceAvant && mDistanceAvant < MAX_POSITION_LV_5) ) 
             {
-                if(_vitesseVoulu > MAX_VITESSE_4) _vitesseVoulu = MAX_VITESSE_4;/*Set Vitesse top*/
-                else mVitesseVoulu = _vitesseVoulu; /*Set vitesse _vitesse */
+                if(_vitesseVoulu > MAX_VITESSE_4) _vitesseVoulu = MAX_VITESSE_4;//Set Vitesse top
+                else mVitesseVoulu = _vitesseVoulu; //Set vitesse _vitesse 
             }
 			else mVitesseVoulu = _vitesseVoulu;
 
@@ -94,49 +96,51 @@ void BrainControl::SetVitesseVoulu(int _vitesseVoulu)
             if((mPositionActuel < MAX_POSITION_LV_1) || 
 					(mDistanceArriere < MAX_POSITION_LV_1 && (mDistanceArriere != -1) ) )
             {
-                mVitesseVoulu = 0; /*Set vitesse _vitesse */
+                mVitesseVoulu = 0; //Set vitesse _vitesse 
             }
 			//Si le bolide arrive entre 1m et 2m de la fin OU un objet
             else if((MAX_POSITION_LV_1 < mPositionActuel && mPositionActuel   < MAX_POSITION_LV_2)|| 
 					(MAX_POSITION_LV_1 < mDistanceArriere && mDistanceArriere < MAX_POSITION_LV_2) )
             {
-                if(_vitesseVoulu > MAX_VITESSE_1) _vitesseVoulu = MAX_VITESSE_1;/*Set Vitesse top*/
-                else mVitesseVoulu = _vitesseVoulu; /*Set vitesse _vitesse */
+                if(_vitesseVoulu > MAX_VITESSE_1) _vitesseVoulu = MAX_VITESSE_1;//Set Vitesse top
+                else mVitesseVoulu = _vitesseVoulu; //Set vitesse _vitesse
             }
 			//Si le bolide arrive entre 2m et 3m de la fin OU un objet
             else if((MAX_POSITION_LV_2 < mPositionActuel && mPositionActuel   < MAX_POSITION_LV_3)|| 
 					(MAX_POSITION_LV_2 < mDistanceArriere && mDistanceArriere < MAX_POSITION_LV_3) )
             {
-                if(_vitesseVoulu > MAX_VITESSE_2) _vitesseVoulu = MAX_VITESSE_2;/*Set Vitesse top*/
-                else mVitesseVoulu = _vitesseVoulu; /*Set vitesse _vitesse */
+                if(_vitesseVoulu > MAX_VITESSE_2) _vitesseVoulu = MAX_VITESSE_2;//Set Vitesse top//
+                else mVitesseVoulu = _vitesseVoulu; //Set vitesse _vitesse 
             }
 			//Si le bolide arrive entre 3m et 4m de la fin OU un objet
             else if((MAX_POSITION_LV_3 < mPositionActuel && mPositionActuel   < MAX_POSITION_LV_4)|| 
 					(MAX_POSITION_LV_3 < mDistanceArriere && mDistanceArriere < MAX_POSITION_LV_4) )
             {
-                if(_vitesseVoulu > MAX_VITESSE_3) _vitesseVoulu = MAX_VITESSE_3;/*Set Vitesse top*/
-                else mVitesseVoulu = _vitesseVoulu; /*Set vitesse _vitesse */
+                if(_vitesseVoulu > MAX_VITESSE_3) _vitesseVoulu = MAX_VITESSE_3;//Set Vitesse top
+                else mVitesseVoulu = _vitesseVoulu; //Set vitesse _vitesse
             }
 			//Si le bolide arrive a 4m de la fin OU un objet
             else if((MAX_POSITION_LV_4 < mPositionActuel && mPositionActuel   < MAX_POSITION_LV_5)|| 
 				( MAX_POSITION_LV_4 < mDistanceArriere && mDistanceArriere < MAX_POSITION_LV_5) ) 
             {
-                if(_vitesseVoulu > MAX_VITESSE_4) _vitesseVoulu = MAX_VITESSE_4;/*Set Vitesse top*/
-                else mVitesseVoulu = _vitesseVoulu; /*Set vitesse _vitesse */
+                if(_vitesseVoulu > MAX_VITESSE_4) _vitesseVoulu = MAX_VITESSE_4;//Set Vitesse top
+                else mVitesseVoulu = _vitesseVoulu; //Set vitesse _vitesse 
             }
 			else mVitesseVoulu = _vitesseVoulu;
         }
     }
     else _vitesseVoulu = 0;
+    */
 }
 
 bool BrainControl::SetAcceleration(int _acceleration){
-    if(_acceleration == 0) mAcceleration = 0;
+    /*if(_acceleration == 0) mAcceleration = 0;
     else if(_acceleration == 1) mAcceleration = 1;
     else if(_acceleration == 2) mAcceleration = 2;
     else if(_acceleration == 3) mAcceleration = 3;
     else if(_acceleration == 4) mAcceleration = 4;
-    else return false;
+    else return false;*/
+    mAcceleration = _acceleration;
     return true;
 }
 

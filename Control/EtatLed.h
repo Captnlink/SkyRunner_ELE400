@@ -34,8 +34,12 @@ class EtatLed
 private:
     //Mettre dans le .h des default config, un enum pour chaque possibilité d'erreur
 	
-	bool ledActualState; //État de la LED (Allumé ou éteinte)
-	char controllerState; //État du controlleur
+	int flashLedState; //État de la LED 
+	int errorState;    //État de la destion d'erreur 
+	int oldTime;    //État de la destion d'erreur 
+	unsigned int controllerState; //État du controlleur Binary state
+	
+	void ChangeLedColor(int color);
 	
 public:
     EtatLed();
@@ -52,14 +56,14 @@ public:
 	bool UpdateLedState(/*State of Controler*/);
 	
 	//Setters
-	bool SetGood();
-	bool SetBattFaible();
-	bool SetBattTooHot();
-	bool SetObjectDetected();
-	bool SetEndOfCourse();
-	bool SetCantGoSetPoint();
-	bool SetEmergencyStop();
-	bool SetNoComms();
+	bool SetGood(bool state);
+	bool SetBattFaible(double tension_batteriee);
+	bool SetBattTooHot(double tempBatterie);
+	bool SetObjectDetected(int distanceObjetDetecte);
+	bool SetEndOfCourse(bool state);
+	bool SetCantGoSetPoint(bool state);
+	bool SetEmergencyStop(bool state);
+	bool SetNoComms(bool state);
 }
 
 #endif
