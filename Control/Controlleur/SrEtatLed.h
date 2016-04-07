@@ -1,6 +1,6 @@
 /**
     Project : CableCam_Chariot\n
-    @file EtatLed.h
+    @file SrEtatLed.h
     @brief G�rent la LED d'information selon les erreurs et warnings du systeme
 
     @author Captnlink
@@ -25,8 +25,7 @@
     @brief g�re l'�tat de la LED d'information
 
     @author Captnlink
-    @version 1.1
-    @date March 20, 2016
+	@author Wsimon
 
     Permet de g�rer les informations du controlleur qui peuvent �tre afficher par la LED.
 	
@@ -55,7 +54,7 @@ public:
     The controller use proportional, integral and derivative operation to drive an output
 
     */
-	bool UpdateLedState(/*State of Controler*/);
+	bool UpdateLedState();
 	
 	//Setters
 	bool SetGood(bool state);

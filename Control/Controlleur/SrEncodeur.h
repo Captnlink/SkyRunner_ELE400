@@ -1,15 +1,12 @@
 /**
-
-    @file SrEncodeur.h
-    @brief Recupere la vitesse et distance lineaire
-
-    @author Captnlink
-
-    @version 1.0
-    @date March 20, 2016
-
-    @warning Il y a un delai(2000) (2s) dans le constructeur().
-*/
+ *	@file SrEncodeur.h
+ *	@brief Classe SrEncodeur, Recupere la vitesse et distance lineaire
+ *
+ *	@author Captnlink
+ *	@version 1.1
+ *	@date March 20, 2016
+ *	@warning Il y a un delai(2000) (2s) dans le constructeur().
+ */
 
 #ifndef SRENCODEUR_H
 #define SRENCODEUR_H
@@ -23,6 +20,13 @@
 #define DIRECTION_AVANT     1
 #define DIRECTION_NULL    0
 
+/**
+ *	@class SrEncodeur.h
+ *	@brief Recupere la vitesse et distance lineaire
+ *
+ *	@author Captnlink
+ *	@warning Il y a un delai(2000) (2s) dans le constructeur().
+ */
 class SrEncodeur
 {
     public:
@@ -44,7 +48,7 @@ class SrEncodeur
         double mVitesseMoy; 
         double mVitesseArray[SAMPLEVITESSE]; 
         int mDirecttion;
-		    double oldTime;
+		double oldTime;
 };
 
 #endif // SRENCODEUR_H

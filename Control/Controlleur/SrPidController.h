@@ -1,9 +1,8 @@
 /**
-    Project : CableCam_Chariot\n
-    @file Controller.h
-    @brief PID_Controller class inside
-
-    @author Samuel Geoffroy AKA Captnlink
+    @file SrPidController.h
+	
+    @brief PID_Controller class 
+    @author Captnlink
     @version 1.1
     @date March 20, 2016
 
@@ -12,15 +11,14 @@
 #ifndef PidController_H_
 #define PidController_H_
 
+#include "SrConfig.h"
+
 /**
-    @class PidController Controller.h
+    @class PidController
     @brief PID Controller
 
-    @author Captnlink
-    @version 1.1
-    @date March 20, 2016
-
-    This class contain a PID controller with the respective gain for proportional, integral and derivative
+    This class contain a PID controller with the respective gain for proportional, integral and derivative.
+	This PID controller is from "PID without a PhD"
 */
 class PidController
 {
@@ -40,9 +38,9 @@ public:
     /**
     @fn UpdatePid
     @brief This fonction refresh the output of the controller
-    @param error     : setpoint - feedback
-    @param feedback  : feedback from machinery
-    @return output   : % of output
+    @param error   : setpoint - feedback
+    @param feedback: feedback from machinery
+    @return output: Percentage of output
 
     The controller use proportional, integral and derivative operation to drive an output
 

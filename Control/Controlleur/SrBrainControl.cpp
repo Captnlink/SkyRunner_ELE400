@@ -1,4 +1,4 @@
-#include "BrainControl.h"
+#include "SrBrainControl.h"
 
 BrainControl::BrainControl(Sabertooth _SyrenDrive):
 	SyrenDrive(_SyrenDrive.address(),_SyrenDrive.port()),

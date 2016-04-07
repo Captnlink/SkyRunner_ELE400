@@ -1,4 +1,4 @@
-#include "EtatLed.h"
+#include "SrEtatLed.h"
 
 EtatLed::EtatLed(){
 	flashLedState = 0; //�tat de la LED (Allum� ou �teinte)

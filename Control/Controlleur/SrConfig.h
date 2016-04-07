@@ -19,21 +19,36 @@
  * Ingenieur - Wantel Simon AKA Wsmon/n
  *
  */
+ 
+/**
+ * 	\section PinOut_sec E/S du Controlleur
+ *	# SERIAL PIN XBEE 0
+ *	# SERIAL PIN XBEE 1
+ *	# ENCODEUR_PIN_A 2
+ *	# ENCODEUR_PIN_B 3
+ *	# PIN_LD_GREEN 4
+ *	# PIN_LD_RED 5
+ *	# SYREN_PIN_TX 10
+ *	# SYREN_PIN_RX 11
+ *	# TRIGGER_PIN_AVANT  6
+ *	# TRIGGER_PIN_ARRIERE  8
+ *	# ECHO_PIN_AVANT     7
+ *	# ECHO_PIN_ARRIERE     9
+  */
 
- //Example of comment
- /*
-
-    @class Name (@fn, @file, @var)
-    @brief Description
-
-    @author Captnlink
-	@email samuel.geoffroy.92@gmail.com
-    @version 0.0
-    @date March 20, 2016
-    @param feedback: feedback from machinery
-    @return output: Percentage of output
-	
-    Detailed Description
+//Example of comment
+/*
+ *	@class Name (@fn, @file, @var)
+ *	@brief Description
+ *
+ *	@author Captnlink
+ *	@email samuel.geoffroy.92@gmail.com
+ *	@version 0.0
+ *	@date March 20, 2016
+ *	@param feedback: feedback from machinery
+ *	@return output: Percentage of output
+ *
+ *	Detailed Description
 */
  
 #ifndef SRCONFIG_H_
@@ -95,7 +110,7 @@
 //Parametre par default
 #define DEFAULT_VITESSE_VOULU 0
 #define DEFAULT_ACCELERATION 0
-#define DEFAULT_POSITION_MAX 0 //0x7830
+#define DEFAULT_POSITION_MAX 0
 
 #define DIVISEUR_TENSION_MAX 15   // Tension maximal du diviseur de tension
 #define BATTERIE_LOW 12
@@ -104,12 +119,13 @@
 //D�lai du cycle pour regarder l'�tat des led et aussi d�lai de  clignotement
 #define DELAY_ETAT_LED 250
 
-// Statut des led pour les switch case pour fonction etat-led
+//fausse Enumeration coleur LED 
 #define GREEN 1
 #define RED 2
 #define YELLOW 3
 #define NO_LIGHT 4
 
+//Binaire des etats d'erreurs
 #define STATE_GOOD 0
 #define STATE_LOWBATT 4
 #define STATE_HOTBATT 2

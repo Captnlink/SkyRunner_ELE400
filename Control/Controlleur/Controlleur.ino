@@ -30,7 +30,7 @@ CNTzzzS
 
 
 
-#include "BrainControl.h"
+#include "SrBrainControl.h"
 #include "SrEncodeur.h"
 #include "SrConfig.h"
 #include "SrCommunication.h"
