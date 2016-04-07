@@ -46,7 +46,7 @@ Sabertooth SyrenDrive(SYREN_DRIVE_ADDR,mySerial);
 BrainControl Controlleur(SyrenDrive);
 
 //Creation objet Communication
-CommXBee Xbee;
+CommXBee Xbee(Controlleur);
 
 //Creation objet Leds
 EtatLed LED;
@@ -80,8 +80,7 @@ void loop() {
   }
   
   if(newTime > (oldTimeTransmition + 500)){
-    Xbee.TransmitionTramXbee(Controlleur, LED);
+    //Xbee.TransmitionTramXbee(Controlleur, LED);
     oldTimeTransmition = millis();
   }
 }
-

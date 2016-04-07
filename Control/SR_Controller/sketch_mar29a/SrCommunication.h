@@ -30,7 +30,7 @@
 class CommXBee
 {
 public:
-	CommXBee();
+	CommXBee(BrainControl& _Controlleur);
 	/** ReceiveTramXbee
 	 * @brief Recois la trame de communication du Xbee
 	 */
@@ -52,6 +52,13 @@ public:
 	 */
 	void UpdateConfiguration(BrainControl& _Controlleur);
 	
+   void SetConnexionFalse(){
+       connexion=false;
+       manetteAdresse =-1;
+   }
+   void IncrementPing(){ping++;}
+   int GetPing(){return ping;}
+
 	//Getters
   bool IsConnected(){return connexion;}
 	bool IsArretUrgence(){return arretUrgence;}
@@ -73,7 +80,7 @@ private:
 	// Variables pour la trame de configuration
 	int acceleration;
 	int longueurCable;
-	
+	int ping;
 	char checkSum;
 	
 	void ResetCommVariable(); 
