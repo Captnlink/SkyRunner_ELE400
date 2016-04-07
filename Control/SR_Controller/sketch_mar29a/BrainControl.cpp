@@ -16,7 +16,7 @@ BrainControl::BrainControl(Sabertooth _SyrenDrive):
 	arretUrgence = false;
 }
 
-bool BrainControl::SetArretUrgenge(bool _urg){
+bool BrainControl::SetArretUrgence(bool _urg){
     arretUrgence = _urg;
     return arretUrgence;
 }
@@ -47,6 +47,7 @@ void BrainControl::Update(){
 //_vitessevoulu en cm/sec
 void BrainControl::SetVitesseVoulu(int _vitesseVoulu)
 {
+  
   mVitesseVoulu = _vitesseVoulu;
   /*
     if(arretUrgence)
@@ -134,13 +135,14 @@ void BrainControl::SetVitesseVoulu(int _vitesseVoulu)
 }
 
 bool BrainControl::SetAcceleration(int _acceleration){
-    /*if(_acceleration == 0) mAcceleration = 0;
+    if(_acceleration == 0) mAcceleration = 0;
     else if(_acceleration == 1) mAcceleration = 1;
     else if(_acceleration == 2) mAcceleration = 2;
     else if(_acceleration == 3) mAcceleration = 3;
     else if(_acceleration == 4) mAcceleration = 4;
-    else return false;*/
-    mAcceleration = _acceleration;
+    else if(_acceleration == 5) mAcceleration = 5;
+    else return false;
+    //mAcceleration = _acceleration;
     return true;
 }
 

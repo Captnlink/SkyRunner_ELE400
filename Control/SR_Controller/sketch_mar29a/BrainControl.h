@@ -77,7 +77,7 @@ public:
 
 
 	//Setters
-	bool SetArretUrgenge(bool _urg);
+	bool SetArretUrgence(bool _urg);
 	void SetVitesseVoulu(int _vitesseVoulu);
 	void SetPositionMax(int _positionMax){mPositionMax = _positionMax;}
 	bool SetAcceleration(int _acceleration);

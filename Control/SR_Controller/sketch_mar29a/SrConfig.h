@@ -48,14 +48,14 @@
 //SERIAL PIN XBEE 1
 #define ENCODEUR_PIN_A 2
 #define ENCODEUR_PIN_B 3
-#define STATE_LED 4
-#define STATE_LED 5
+#define PIN_LD_GREEN 4
+#define PIN_LD_RED 5
 #define SYREN_PIN_TX 10
 #define SYREN_PIN_RX 11
-#define TRIGGER_PIN_AVANT  12
-#define TRIGGER_PIN_ARRIERE  14
-#define ECHO_PIN_AVANT     11
-#define ECHO_PIN_ARRIERE     13
+#define TRIGGER_PIN_AVANT  6
+#define TRIGGER_PIN_ARRIERE  8
+#define ECHO_PIN_AVANT     7
+#define ECHO_PIN_ARRIERE     9
 
 #define THERMISTORPIN A0   // Pin analogique du arduino
 #define DIVISEUR_TENSION_PIN A1   // Pin analogique du arduino
@@ -83,8 +83,6 @@
 #define BCOEFFICIENT 3950 // Coefficient Beta de la thermistance (normalement 3000-4000)
 #define SERIESRESISTOR 10000  // La valeur 'l'autre' resistance
 
-#define DIVISEUR_TENSION_MAX 15   // Tension maximal du diviseur de tension
-
 //Encodeur
 #define SAMPLEVITESSE 5
 #define RAYONCM 5
@@ -95,8 +93,30 @@
 #define DERIVATIVE_GAIN 0
 
 //Parametre par default
-#define DEFAULT_VITESSE_VOULU 97
-#define DEFAULT_ACCELERATION 97
-#define DEFAULT_POSITION_MAX 0x7830
+#define DEFAULT_VITESSE_VOULU 0
+#define DEFAULT_ACCELERATION 0
+#define DEFAULT_POSITION_MAX 0 //0x7830
+
+#define DIVISEUR_TENSION_MAX 15   // Tension maximal du diviseur de tension
+#define BATTERIE_LOW 12
+#define TEMP_BATT_TOO_HOT 40
+
+//D�lai du cycle pour regarder l'�tat des led et aussi d�lai de  clignotement
+#define DELAY_ETAT_LED 250
+
+// Statut des led pour les switch case pour fonction etat-led
+#define GREEN 1
+#define RED 2
+#define YELLOW 3
+#define NO_LIGHT 4
+
+#define STATE_GOOD 0
+#define STATE_LOWBATT 4
+#define STATE_HOTBATT 2
+#define STATE_OBJDETECT 32
+#define STATE_ENDCOURSE 1
+#define STATE_NOSETPOINT 8
+#define STATE_EMERGENCY 64
+#define STATE_NOCOMMS 128
 
 #endif
