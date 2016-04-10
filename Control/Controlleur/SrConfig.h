@@ -119,6 +119,20 @@
 //D�lai du cycle pour regarder l'�tat des led et aussi d�lai de  clignotement
 #define DELAY_ETAT_LED 250
 
+/*
+ Good : Constinuly GREEN
+ BattFaible : Flash Red Red Red Red
+	BattTooHot : Flash Red Yel Red Yel
+	ObjectDetected : Flash Red Red Yel Yel
+	EndOfCourse : Flash Yel Yel Yel Yel
+	CantGoSetPoint : Flash Grn Grn Grn Grn
+	EmergencyStop : Constinuly RED
+	NoComms : Constinuly YELLOW
+	
+	Afin de changer l'ordre et/ou les couleurs aller dans le SrEtatLed.cpp dans la methode UpdateLedState
+	Il y a une serie de constante qui represente chaque etats
+*/
+
 //fausse Enumeration coleur LED 
 #define GREEN 1
 #define RED 2
