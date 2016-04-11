@@ -1,0 +1,624 @@
+/**
+ * @author  David Prairie-Bourgault and Alexi Demers
+ * @email   alexidemers@gmail.com
+ * @version v1
+ * @ide     Keil uVision
+ * @brief   This class allows to display all menus and datas of the
+ *					ETS ELE400 Cable Cam project's user interface. The project
+ * 					was realized by members of the team SkyRunner.
+ */
+
+#include "CamScreen.h"
+
+#include "tm_stm32f4_disco.h"
+
+/******************************************************************************/
+/*            									Global Variables           	      			 		  */
+/******************************************************************************/
+
+
+/* TM_STMPE811_TouchData instance */
+	TM_STMPE811_TouchData touch_data_;
+/* TM_ILI9341_Button_t instance */
+	TM_ILI9341_Button_t button_;
+	int8_t button_Pressed_, bouton_retour_acceuil_,bouton_retour_config_, button_forward_, button_backward_, button_speed_inc_,button_speed_0_, button_speed_dec_,
+					button_accel_inc_, button_accel_dec_, button_lenght_inc_, button_lenght_dec_, button_send_config_, button_connect_;
+	
+char str_[30];	
+int i;
+
+uint16_t Fleche_Haut_18x23[]= {
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 
+0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff
+};	
+
+
+uint16_t Fleche_Bas_18x23[] = {
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 
+0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff
+};
+
+
+
+uint16_t Fleche_Droite_23x18[] = {
+	0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 
+0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 
+0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 
+0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff
+};
+
+
+uint16_t Fleche_Gauche_23x18[] = {
+
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 
+0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 
+0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 
+0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff
+};
+
+/******************************************************************************/
+/*            								Functions definitions           	              */
+/******************************************************************************/ 
+
+void CamScreen_Init(void){
+	TM_ILI9341_Init();
+	TM_STMPE811_Init();
+	TM_DISCO_LedInit();
+}
+
+/******************************************************************************/
+
+void CamScreen_EcranAccueil(void){
+	
+	/* Clear LCD */
+	CamScreen_ClrScreen();
+	/* Delete Bouton existant */
+	TM_ILI9341_Button_DeleteAll();
+	
+	TM_ILI9341_Puts(50, 90, "SkyRunner", &TM_Font_16x26, ILI9341_COLOR_GRAY, ILI9341_COLOR_RED);
+	TM_ILI9341_Puts(57,180, "Cable Camera", &TM_Font_11x18, ILI9341_COLOR_RED, ILI9341_COLOR_GRAY);
+	TM_ILI9341_Puts(70,230, "Press anywhere", &TM_Font_7x10, ILI9341_COLOR_RED, ILI9341_COLOR_GRAY);
+	TM_ILI9341_Puts(90,240, "To begin", &TM_Font_7x10, ILI9341_COLOR_RED, ILI9341_COLOR_GRAY);
+
+}
+
+/******************************************************************************/
+
+uint8_t CamScreen_ButtonsState(void){
+	uint8_t buttons_flag = 0;
+	
+	static int8_t pevious_button_Pressed = 0;
+	
+	// read buttons
+	int8_t button_pressed;
+
+	
+	// read any LCD touch
+	if(TM_STMPE811_ReadTouch(&touch_data_) == TM_STMPE811_State_Pressed){
+		buttons_flag = SCREEN_PRESSED;
+		button_pressed = TM_ILI9341_Button_Touch(&touch_data_);
+		
+		// Verify state on buttons that do not need change detection
+		if(button_pressed == button_lenght_dec_){
+			buttons_flag = BUTTON_CABLE_M;
+		}
+		else if(button_pressed == button_lenght_inc_){
+			buttons_flag = BUTTON_CABLE_P;
+		}
+		else if(button_pressed == button_speed_dec_){
+			buttons_flag = BUTTON_SPEED_M;
+		}
+		else if(button_pressed == button_speed_inc_){
+			buttons_flag = BUTTON_SPEED_P;
+		}
+		
+		// Verify a change on buttons state
+		if(pevious_button_Pressed != button_pressed){
+			pevious_button_Pressed = button_pressed;
+			if(button_pressed == bouton_retour_acceuil_)
+			{
+				buttons_flag = BUTTON_CONTROL_SCREEN;
+			}
+			else if(button_pressed == button_forward_){
+				buttons_flag = BUTTON_FORWARD;
+			}
+			else if(button_pressed == button_backward_){
+				buttons_flag = BUTTON_BACKWARD;
+			}
+			else if(button_pressed == bouton_retour_config_){
+				buttons_flag = BUTTON_CONFIG_SCREEN;
+			}
+			else if(button_pressed == button_accel_dec_){
+				buttons_flag = BUTTON_ACCEL_M;
+			}
+			else if(button_pressed == button_accel_inc_){
+				buttons_flag = BUTTON_ACCEL_P;
+			}
+			else if(button_pressed == button_send_config_){
+				buttons_flag = BUTTON_CONFIG;
+			}
+			else if(button_pressed == button_speed_0_){
+				buttons_flag = BUTTON_SPEED_0;
+			}
+			else if(button_pressed == button_connect_){
+				buttons_flag = BUTTON_CONNECT;
+			}
+		}
+	}
+	
+	// turn on the led if a button is pushed
+	if(buttons_flag != 0 && buttons_flag != SCREEN_PRESSED)TM_DISCO_SetLed(LED_RED, 1);
+	else TM_DISCO_SetLed(LED_RED, 0);
+	
+	// return button pushed
+	return buttons_flag;
+}
+
+/******************************************************************************/
+
+void CamScreen_EcranConfig(void){
+	T_Config_Setting init_values = {0,0};
+	/* Clear LCD */
+	CamScreen_ClrScreen();
+	
+	/* Delete Bouton existant */
+	TM_ILI9341_Button_DeleteAll();
+	
+	/* Button1 Retour à l'acceuil, default configuration */
+	/* Red with black border and black font 11x18 */
+	button_.x = 1;
+	button_.y = 279;
+	button_.width = 90;
+	button_.height = 39;
+	button_.background = ILI9341_COLOR_RED;
+	button_.borderColor = ILI9341_COLOR_BLACK;
+	button_.color = ILI9341_COLOR_BLACK;
+	button_.font = &TM_Font_7x10;
+	button_.flags =  TM_BUTTON_FLAG_NOLABEL;
+	/* Add button_ */
+	bouton_retour_acceuil_ = TM_ILI9341_Button_Add(&button_);
+	
+	/* Button2 Envoyer la config, default configuration */
+	/* Red with black border and black font 11x18 */
+	button_.x = 148;
+	button_.y = 279;
+	button_.width = 90;
+	button_.height = 39;
+	button_.background = ILI9341_COLOR_GRAY;
+	button_.borderColor = ILI9341_COLOR_BLACK;
+	button_.color = ILI9341_COLOR_BLACK;
+	button_.font = &TM_Font_7x10;
+	button_.flags =  TM_BUTTON_FLAG_NOLABEL;
+	/* Add button_ */
+	button_send_config_ = TM_ILI9341_Button_Add(&button_);
+	
+	
+	/* Button3 Up lenght cable with image: fleche_haut_18x23 */
+	button_.x = 25;
+	button_.y = 90;
+	button_.width = 18;
+	button_.height = 23;
+	button_.borderColor = ILI9341_COLOR_BLACK;
+	/* Use background image and no label */
+	button_.flags = TM_BUTTON_FLAG_NOLABEL | TM_BUTTON_FLAG_IMAGE;
+	button_.image = Fleche_Haut_18x23; 
+	/* Add button_ */
+	button_lenght_inc_ = TM_ILI9341_Button_Add(&button_);
+	
+	/* Button4 Down lenght cable with image: fleche_bas_18x23 */
+	button_.x = 25;
+	button_.y = 115;
+	button_.width = 18;
+	button_.height = 23;
+	button_.borderColor = ILI9341_COLOR_BLACK;
+	/* Use background image and no label */
+	button_.flags = TM_BUTTON_FLAG_NOLABEL | TM_BUTTON_FLAG_IMAGE;
+	button_.image = Fleche_Bas_18x23; 
+	/* Add button_ */
+	button_lenght_dec_ = TM_ILI9341_Button_Add(&button_);
+	
+	/* Button5 Up accelaration with image: fleche_haut_18x23 */
+	button_.x = 25;
+	button_.y = 175;
+	button_.width = 18;
+	button_.height = 23;
+	button_.borderColor = ILI9341_COLOR_BLACK;
+	/* Use background image and no label */
+	button_.flags = TM_BUTTON_FLAG_NOLABEL | TM_BUTTON_FLAG_IMAGE;
+	button_.image = Fleche_Haut_18x23; 
+	/* Add button_ */
+	button_accel_inc_ = TM_ILI9341_Button_Add(&button_);
+	
+	/* Button6 Down accelaration with image: fleche_bas_18x23 */
+	button_.x = 25;
+	button_.y = 200;
+	button_.width = 18;
+	button_.height = 23;
+	button_.borderColor = ILI9341_COLOR_BLACK;
+	/* Use background image and no label */
+	button_.flags = TM_BUTTON_FLAG_NOLABEL | TM_BUTTON_FLAG_IMAGE;
+	button_.image = Fleche_Bas_18x23; 
+	/* Add button_ */
+	button_accel_dec_ = TM_ILI9341_Button_Add(&button_);
+	
+	/* Draw button_s */
+	TM_ILI9341_Button_DrawAll();
+	
+	TM_ILI9341_Button_Enable(bouton_retour_acceuil_);
+	
+	
+	/* Label for Button1 Retour à l'acceuil */
+	TM_ILI9341_Puts(11,289, "   Main", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_RED);
+	TM_ILI9341_Puts(9,303, "  Screen", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_RED);
+	
+	/* Label for Button2 Envoi de la config */
+	TM_ILI9341_Puts(162,289, "   Send", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_GRAY);
+	TM_ILI9341_Puts(160,303, "  Config", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_GRAY);
+	
+	
+	
+	TM_ILI9341_Puts(30,20, "Cable Cam", &TM_Font_11x18, ILI9341_COLOR_RED, ILI9341_COLOR_WHITE);
+	TM_ILI9341_Puts(65,40, "Configuration", &TM_Font_11x18, ILI9341_COLOR_RED, ILI9341_COLOR_WHITE);
+	
+	TM_ILI9341_Puts(55,105, "Cable \nlenght", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+	
+	TM_ILI9341_Puts(55,190, "Motor's \nacceleration", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+	CamScreen_RefreshEcranConfig(&init_values, true);
+}
+
+/******************************************************************************/
+
+void CamScreen_EcranControle(void){
+	
+	T_Controle_Information init_values = {Controller_Offline,controller_disconnected,0,0,0,0,0};
+	
+	/* Clear LCD */
+	CamScreen_ClrScreen();
+	/* Delete Bouton existant */
+	TM_ILI9341_Button_DeleteAll();
+	
+	/* Button1 Retour à la config, default configuration */
+	/* Red with black border and black font 11x18 */
+	button_.x = 148;
+	button_.y = 279;
+	button_.width = 90;
+	button_.height = 39;
+	button_.background = ILI9341_COLOR_RED;
+	button_.borderColor = ILI9341_COLOR_BLACK;
+	button_.color = ILI9341_COLOR_BLACK;
+	button_.font = &TM_Font_7x10;
+	button_.flags =  TM_BUTTON_FLAG_NOLABEL;
+	/* Add button_ */
+	bouton_retour_config_ = TM_ILI9341_Button_Add(&button_);
+	
+	
+	/* Button2 Direction avant with image: fleche_haut_18x23 */
+	button_.x = 85;
+	button_.y = 40;
+	button_.width = 18;
+	button_.height = 23;
+	button_.borderColor = ILI9341_COLOR_BLACK;
+	/* Use background image and no label */
+	button_.flags = TM_BUTTON_FLAG_NOLABEL | TM_BUTTON_FLAG_IMAGE;
+	button_.image = Fleche_Haut_18x23; 
+	/* Add button_ */
+	button_forward_ = TM_ILI9341_Button_Add(&button_);
+	
+	/* Button3 Direction arrière cable with image: fleche_bas_18x23 */
+	button_.x = 105;
+	button_.y = 40;
+	button_.width = 18;
+	button_.height = 23;
+	button_.borderColor = ILI9341_COLOR_BLACK;
+	/* Use background image and no label */
+	button_.flags = TM_BUTTON_FLAG_NOLABEL | TM_BUTTON_FLAG_IMAGE;
+	button_.image = Fleche_Bas_18x23; 
+	/* Add button_ */
+	button_backward_ = TM_ILI9341_Button_Add(&button_);
+	
+	
+	
+		/* Button 4,augmenter vitesse, default configuration */
+	button_.x = 70;	/* X location */
+	button_.y = 80;	/* Y location */
+	button_.width = 20;
+	button_.height = 20;
+	button_.background = ILI9341_COLOR_RED;
+	button_.borderColor = ILI9341_COLOR_BLACK;
+	button_.label = "+";
+	button_.color = ILI9341_COLOR_BLACK;
+	button_.font = &TM_Font_11x18;
+	button_.flags = 0;
+	/* Add button_ */
+	button_speed_inc_ = TM_ILI9341_Button_Add(&button_);
+	
+	/* Button 5, diminuer vitesse, default configuration */
+	button_.x = 93;	/* X location */
+	button_.y = 80;	/* Y location */
+	button_.width = 20;
+	button_.height = 20;
+	button_.background = ILI9341_COLOR_WHITE;
+	button_.borderColor = ILI9341_COLOR_BLACK;
+	button_.label = "O";
+	button_.color = ILI9341_COLOR_BLACK;
+	button_.font = &TM_Font_11x18;
+	button_.flags = 0;
+	/* Add button_ */
+	button_speed_0_ = TM_ILI9341_Button_Add(&button_);
+	
+	/* Button 6, diminuer vitesse, default configuration */
+	button_.x = 116;	/* X location */
+	button_.y = 80;	/* Y location */
+	button_.width = 20;
+	button_.height = 20;
+	button_.background = ILI9341_COLOR_RED;
+	button_.borderColor = ILI9341_COLOR_BLACK;
+	button_.label = "-";
+	button_.color = ILI9341_COLOR_BLACK;
+	button_.font = &TM_Font_11x18;
+	button_.flags = 0;
+	/* Add button_ */
+	button_speed_dec_ = TM_ILI9341_Button_Add(&button_);
+	
+	/* Button7 connect/disconnect */
+	button_.x = 3;
+	button_.y = 279;
+	button_.width = 90;
+	button_.height = 39;
+	/* Use background image and no label */
+	button_.background = ILI9341_COLOR_GRAY;
+	button_.borderColor = ILI9341_COLOR_BLACK;
+	button_.color = ILI9341_COLOR_BLACK;
+	button_.font = &TM_Font_7x10;
+	button_.flags =  TM_BUTTON_FLAG_NOLABEL;
+	/* Add button_ */
+	button_connect_ = TM_ILI9341_Button_Add(&button_);
+	
+	/* Draw button_s */
+	TM_ILI9341_Button_DrawAll();
+	
+	TM_ILI9341_Puts(180,30, "S\nk-R\ny-u\n  n\n  n\n  e\n  r", &TM_Font_16x26, ILI9341_COLOR_RED, ILI9341_COLOR_WHITE);
+	
+	TM_ILI9341_Puts(5,3, "CableCam:", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+	
+	TM_ILI9341_Puts(180,3, "Bat:", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+	
+	TM_ILI9341_Puts(10,40, "Direction:", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+	
+	TM_ILI9341_Puts(10,75, "Asked\nSpeed:", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+	
+	TM_ILI9341_Puts(10,120, "Position:", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+	
+	TM_ILI9341_Puts(80,120, "Actual speed:", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+	
+	TM_ILI9341_Puts(10,160,"Errors:", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+	
+	/* Label for Button2 Envoi de la config */
+	TM_ILI9341_Puts(162,289, " Config", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_RED);
+	TM_ILI9341_Puts(160,303, " Screen", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_RED);
+	
+	/* Label for Button7 connect */
+	TM_ILI9341_Puts(10,289, " Connect", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_GRAY);
+	TM_ILI9341_Puts(10,303, "/Disconnect", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_GRAY);
+	
+	CamScreen_RefreshEcranControle(&init_values, true);
+}
+
+/******************************************************************************/
+
+void CamScreen_RefreshEcranConfig(T_Config_Setting* Config_Setting, bool force_refresh){
+	
+	static T_Config_Setting previous_values = {0,0};
+	bool values_changed = false;
+	
+	values_changed = previous_values.Accelation != Config_Setting->Accelation || 
+											previous_values.LenghtCable != Config_Setting->LenghtCable;
+	
+	previous_values.Accelation = Config_Setting->Accelation;
+	previous_values.LenghtCable = Config_Setting->LenghtCable;
+	
+	if(values_changed || force_refresh){
+		sprintf(str_, ":%ddm     ", Config_Setting->LenghtCable);
+		TM_ILI9341_Puts(115, 104, str_, &TM_Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+		sprintf(str_, ":%d     ", Config_Setting->Accelation);
+		TM_ILI9341_Puts(165, 190, str_, &TM_Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+	}
+}
+
+/******************************************************************************/
+
+void CamScreen_RefreshEcranControle(T_Controle_Information* Controle_Information, bool force_refresh){
+	static T_Controle_Information previous_values = {Controller_Offline,controller_disconnected,0,0,0,0,0};
+	int i=0;
+	
+	// Verifying changes on data
+	bool status_changed = Controle_Information->ControllerStatus != previous_values.ControllerStatus;
+	bool act_speed_changed = Controle_Information->VitesseReel != previous_values.VitesseReel;
+	bool asked_speed_changed = Controle_Information->VitesseVoulu != previous_values.VitesseVoulu;
+	bool batt_changed = Controle_Information->BattLevel != previous_values.BattLevel;
+	bool pos_changed = Controle_Information->Position != previous_values.Position;
+	bool errors_changed = Controle_Information->errors_flags != previous_values.errors_flags;
+	bool connected_changed = Controle_Information->ControllerConnected != previous_values.ControllerConnected;
+	
+	previous_values.BattLevel = Controle_Information->BattLevel;
+	previous_values.errors_flags = Controle_Information->errors_flags;
+	previous_values.Position = Controle_Information->Position;
+	previous_values.VitesseVoulu = Controle_Information->VitesseVoulu;
+	previous_values.VitesseReel = Controle_Information->VitesseReel;
+	previous_values.ControllerStatus = Controle_Information->ControllerStatus;
+	previous_values.ControllerConnected = Controle_Information->ControllerConnected;
+	
+	
+	// All data is refreshed only if it has changed
+	
+	
+	
+	if(status_changed || connected_changed|| force_refresh){
+		if(Controle_Information->ControllerStatus){
+			TM_ILI9341_Puts(80,3,"Online ", &TM_Font_7x10, ILI9341_COLOR_GREEN, ILI9341_COLOR_WHITE);
+		}
+		else{
+			TM_ILI9341_Puts(80,3,"Offline", &TM_Font_7x10, ILI9341_COLOR_ORANGE, ILI9341_COLOR_WHITE);
+		}
+		if(!Controle_Information->ControllerConnected && Controle_Information->ControllerStatus){
+			TM_ILI9341_Puts(80,15,"Connected     ", &TM_Font_7x10, ILI9341_COLOR_GREEN, ILI9341_COLOR_WHITE);
+		}
+		else{
+			TM_ILI9341_Puts(80,15,"Not connected ", &TM_Font_7x10, ILI9341_COLOR_ORANGE, ILI9341_COLOR_WHITE);
+		}
+	}
+	
+	if(	batt_changed|| force_refresh){
+		sprintf(str_, "%d%%", Controle_Information->BattLevel);
+		TM_ILI9341_Puts(208,3, "    ", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+		TM_ILI9341_Puts(208,3, str_, &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+	}
+	
+	if(asked_speed_changed|| force_refresh){
+		if(Controle_Information->VitesseVoulu < 0){
+			TM_ILI9341_Puts(10,52,"Backward", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+		}
+		else{
+			TM_ILI9341_Puts(10,52,"Forward ", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+		}
+	
+		sprintf(str_, "%d%%",Controle_Information->VitesseVoulu);
+		TM_ILI9341_Puts(18,100, "       ", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+		TM_ILI9341_Puts(18,100, str_, &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+	}
+	
+	if(pos_changed|| force_refresh){
+		sprintf(str_, "%ddm",Controle_Information->Position);
+		TM_ILI9341_Puts(18,133, "       ", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+		TM_ILI9341_Puts(18,133, str_, &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+	}
+	
+	if(act_speed_changed|| force_refresh){
+		sprintf(str_, "  %d%%",Controle_Information->VitesseReel);
+		TM_ILI9341_Puts(95,133, "       ", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+		TM_ILI9341_Puts(95,133, str_, &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+	}
+	
+	
+	if(errors_changed|| force_refresh){
+		//effacer error avant d'afficher ou faire refresh
+		for(i=173;i<=264;i+=13){
+			TM_ILI9341_Puts(10,i,"                             ", &TM_Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+		}
+		i= 173 ;
+		if((Controle_Information->errors_flags & BATT_TEMP) == BATT_TEMP){
+			TM_ILI9341_Puts(10,i,"-Battery temperature high", &TM_Font_7x10, ILI9341_COLOR_ORANGE, ILI9341_COLOR_WHITE);
+			i+=13;
+		}
+		if((Controle_Information->errors_flags & MOTOR_FORCES) == MOTOR_FORCES){
+			TM_ILI9341_Puts(10,i,"-Motor forces to reach speed", &TM_Font_7x10, ILI9341_COLOR_ORANGE, ILI9341_COLOR_WHITE);
+			i+=13;
+		}
+		if((Controle_Information->errors_flags & INVALID_COMMAND) == INVALID_COMMAND){
+			TM_ILI9341_Puts(10,i,"-Cam: Invalid comms received", &TM_Font_7x10, ILI9341_COLOR_ORANGE, ILI9341_COLOR_WHITE);
+			i+=13;
+		}
+		if((Controle_Information->errors_flags & OBSTACLE) == OBSTACLE){
+			TM_ILI9341_Puts(10,i,"-Obstacle on the cable", &TM_Font_7x10, ILI9341_COLOR_ORANGE, ILI9341_COLOR_WHITE);
+			i+=13;
+		}
+		if((Controle_Information->errors_flags & BATT_LOW) == BATT_LOW){
+			TM_ILI9341_Puts(10,i,"-Battery low", &TM_Font_7x10, ILI9341_COLOR_ORANGE, ILI9341_COLOR_WHITE);
+			i+=13;
+		}
+		if((Controle_Information->errors_flags & CABLE_END) == CABLE_END){
+			TM_ILI9341_Puts(10,i,"-End of cable reached", &TM_Font_7x10, ILI9341_COLOR_ORANGE, ILI9341_COLOR_WHITE);
+			i+=13;
+		}
+		if((Controle_Information->errors_flags & NO_INTERFACES)	== NO_INTERFACES){
+			TM_ILI9341_Puts(10,i,"-No interfaces connected", &TM_Font_7x10, ILI9341_COLOR_ORANGE, ILI9341_COLOR_WHITE);
+			i+=13;
+		}
+		if((Controle_Information->errors_flags & TX_ERROR)	|| (Controle_Information->errors_flags & RX_ERROR)){
+			TM_ILI9341_Puts(10,i,"-Communication error occured", &TM_Font_7x10, ILI9341_COLOR_ORANGE, ILI9341_COLOR_WHITE);
+			i+=13;
+		}
+		if((Controle_Information->errors_flags & EMERGENCY_STOP)	== EMERGENCY_STOP){
+			TM_ILI9341_Puts(10,i,"-In emergency stop", &TM_Font_7x10, ILI9341_COLOR_ORANGE, ILI9341_COLOR_WHITE);
+			//i+=26;
+		}
+	}
+}
+
+/******************************************************************************/
+
+void CamScreen_ClrScreen(void){
+	TM_ILI9341_Fill(ILI9341_COLOR_WHITE);
+}
+/******************************************************************************/
+
