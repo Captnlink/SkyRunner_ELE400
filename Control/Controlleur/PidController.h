@@ -1,5 +1,5 @@
 /**
-    @file SrPidController.h
+    @file PidController.h
 	
     @brief PID_Controller class 
     @author Captnlink
@@ -16,6 +16,9 @@
 /**
     @class PidController
     @brief PID Controller
+
+    @version 1.1
+    @date March 20, 2016
 
     This class contain a PID controller with the respective gain for proportional, integral and derivative.
 	This PID controller is from "PID without a PhD"

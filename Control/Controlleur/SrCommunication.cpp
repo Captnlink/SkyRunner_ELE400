@@ -21,37 +21,48 @@ CommXBee::CommXBee(BrainControl& Controlleur){
 	tramToSend = "";
 	}
 
+
 void CommXBee::TransmitionTramXbee(BrainControl& Controlleur, EtatLed& LED){
 	CommXBee::ResetCommVariable();
+	
+//On divise les longeur par 10 afin d'envoyer en dm
+long longeurMax = Controlleur.GetPositionMax()/10;
+long longeurActuel = Controlleur.GetPositionActuel()/10;
 
   msg[0] = 'S';
   msg[1] = 'T';
   msg[2] = 'A';
   msg[3] = lowByte((int)Controlleur.GetTensionBaterie());
-  msg[4] = highByte(Controlleur.GetPositionActuel());
-  msg[5] = lowByte(Controlleur.GetPositionActuel());
+  msg[4] = highByte(longeurActuel);
+  msg[5] = lowByte(longeurActuel);
   msg[6] = lowByte((int)Controlleur.GetVitesseVoulu());
   msg[7] = lowByte((int)Controlleur.GetVitesseActuel());
   msg[8] = lowByte(Controlleur.GetAcceleration());
-  msg[9] = highByte(Controlleur.GetPositionMax());
-  msg[10] = lowByte(Controlleur.GetPositionMax());
+  msg[9] = highByte(longeurMax);
+  msg[10] = lowByte(longeurMax);
   msg[11] =  lowByte(manetteAdresse);
   msg[12] = LED.GetErrorState();
   for(int i = 0; i<13;i++){msg[13] += msg[i];}
   
+  #if DEBUG
   Serial.print(" Sent Tram     ");
+  #endif
+   
   for(int i = 0; i<14;i++){Serial.print(msg[i]);} 
+  
+  
+  #if DEBUG
   Serial.println("");   
   Serial.print(" Batt ");   Serial.print(" PosH ");   Serial.print(" PosL ");   Serial.print(" VitV ");   Serial.print(" VitA ");   Serial.print(" Accl ");   Serial.print(" PoMH ");   Serial.print(" PoML ");    Serial.print(" Addr ");    Serial.print(" Err  ");    Serial.println(" CSum ");
   Serial.print("  "); Serial.print((int)msg[3]);Serial.print("    ");Serial.print((int)msg[4]);Serial.print("    ");Serial.print((int)msg[5]);Serial.print("    ");Serial.print((int)msg[6]);Serial.print("    ");Serial.print((int)msg[7]);Serial.print("    ");Serial.print((int)msg[8]);Serial.print("    ");Serial.print((int)msg[9]);Serial.print("    ");Serial.print((int)msg[10]);Serial.print("    ");Serial.print((int)msg[11]);Serial.print("    ");Serial.print((int)msg[12]);Serial.print("    ");Serial.println((int)msg[12]);
-
+  #endif
 }	
 
 
 void CommXBee::ReceiveTramXbee(BrainControl& _Controlleur){
 	String SOF = "";
 	
-	//Trame de connexion
+	//Trame de connexion verification seulement si aucun autre appareil est connecter
 	if (Serial.available() && !connexion) { 
 	
 		CommXBee::ResetCommVariable();
@@ -75,6 +86,7 @@ void CommXBee::ReceiveTramXbee(BrainControl& _Controlleur){
 			checkSum = msg[0] + msg[1] + msg[2] + msg[3];
 
       #if DEBUG
+      Serial.println("");
       Serial.print(" CMD ");   Serial.print(" Addr ");   Serial.println(" CSum ");   
       Serial.print(" "); Serial.print(msg[0]);Serial.print(msg[1]);Serial.print(msg[2]);Serial.print("    ");Serial.print((int)msg[3]);Serial.print("    ");Serial.println((int)msg[4]);
       Serial.print("CheckSum : ");Serial.println(checkSum);
@@ -89,7 +101,7 @@ void CommXBee::ReceiveTramXbee(BrainControl& _Controlleur){
    else return;
 	}		
 		
-	//Trame lorsque manette connecter
+	//Trame lorsqu'une manette est connectee
 	else if (Serial.available() && connexion) { 
 	
 		CommXBee::ResetCommVariable();
@@ -116,6 +128,7 @@ void CommXBee::ReceiveTramXbee(BrainControl& _Controlleur){
             checkSum = msg[0] + msg[1] + msg[2] + msg[3] + msg[4] + msg[5] + msg[6];
       
             #if DEBUG
+            Serial.println("");
             Serial.print(" CMD ");                                                                                 Serial.print(" Addr "); Serial.print(" Accl ");  Serial.print(" PosH ");   Serial.print(" PosL ");   Serial.println(" CSum ");
             Serial.print(" "); Serial.print(msg[0]);Serial.print(msg[1]);Serial.print(msg[2]);Serial.print("    ");Serial.print((int)msg[3]);Serial.print("    ");Serial.println((int)msg[4]);Serial.print("  "); Serial.print((int)msg[3]);Serial.print("    ");Serial.print((int)msg[4]);Serial.print("    ");Serial.print((int)msg[5]);Serial.print("    ");Serial.print((int)msg[6]);Serial.print("    ");Serial.println((int)msg[7]);
             Serial.print("CheckSum : ");Serial.println(checkSum);
@@ -139,6 +152,7 @@ void CommXBee::ReceiveTramXbee(BrainControl& _Controlleur){
           checkSum = msg[0] + msg[1] + msg[2] + msg[3] + msg[4] + msg[5];
           
           #if DEBUG
+          Serial.println("");
           Serial.print(" CMD ");                                                                                 Serial.print(" Addr ");   Serial.print(" VitV ");   Serial.print(" Urg ");   Serial.println(" CSum ");
           Serial.print(" "); Serial.print(msg[0]);Serial.print(msg[1]);Serial.print(msg[2]);Serial.print("    ");Serial.print((int)msg[3]);Serial.print("    ");Serial.println((int)msg[4]);Serial.print("  "); Serial.print((int)msg[5]);Serial.print("    ");Serial.println((int)msg[6]);
           Serial.print("CheckSum : ");Serial.println(checkSum);
@@ -147,7 +161,6 @@ void CommXBee::ReceiveTramXbee(BrainControl& _Controlleur){
 			if(checkSum == msg[6] && manetteAdresse == msg[3]) {
 				vitesse = msg[4];
 				arretUrgence = msg[5];
-				Serial.println("");Serial.print("ArretDurgence");Serial.print(arretUrgence);Serial.print("msg");Serial.println(arretUrgence);
 				_Controlleur.SetArretUrgence(arretUrgence);
 				if(IsChangementConsigne(_Controlleur)){
                     UpdateConfiguration(_Controlleur);
@@ -176,11 +189,8 @@ void CommXBee::ReceiveTramXbee(BrainControl& _Controlleur){
 			msg[4]=Serial.read(); //Byte pour CheckSum
 			
 			checkSum = msg[0] + msg[1] + msg[2] + msg[3];
-			Serial.print("PING1");
 			if(checkSum == msg[4]) {
-			    Serial.print("PING2");
 				if(manetteAdresse == msg[3]){
-				    Serial.println("PING3");
 					ping = 0;
 				}
 			}
@@ -208,13 +218,13 @@ int CommXBee::BitShiftCombine( unsigned char x_high, unsigned char x_low)
 bool CommXBee::IsChangementConsigne(BrainControl& _Controlleur){
 	
 	if(_Controlleur.GetVitesseVoulu() != vitesse) 		return true;
-	if(_Controlleur.GetPositionMax() != longueurCable) 	return true;
+	if(_Controlleur.GetPositionMax() != longueurCable*10) 	return true;
 	if(_Controlleur.GetAcceleration() != acceleration) 	return true;
 	return false;
 }
 
 void CommXBee::UpdateConfiguration(BrainControl& _Controlleur){
 	if(_Controlleur.GetVitesseVoulu() != vitesse) _Controlleur.SetVitesseVoulu(vitesse);
-	if(_Controlleur.GetPositionMax() != longueurCable) _Controlleur.SetPositionMax(longueurCable);
+	if(_Controlleur.GetPositionMax() != longueurCable*10) _Controlleur.SetPositionMax(longueurCable*10);
 	if(_Controlleur.GetAcceleration() != acceleration) _Controlleur.SetAcceleration(acceleration);
 }

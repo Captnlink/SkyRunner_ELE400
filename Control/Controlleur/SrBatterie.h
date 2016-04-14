@@ -3,7 +3,6 @@
     @brief Contient la classe batterie
 
     @author Captnlink
-    @version 1.3
     @date March 20, 2016
 */
 
@@ -18,6 +17,10 @@
     @brief Permet l'acquisition d'une valeur de temperature et de voltage
 
     @author Captnlink
+
+    @version 1.4
+    @date April 14, 2016
+
 	@warning Il y a un delai(10) (10 ms) dans la fonction GetSample().
 	
 	Permet de recuperer une valeur analogique et de la transformer en temperature ou voltage selon la pin utilise.
@@ -50,6 +53,7 @@ private:
 	void GetSample(int _SensorPin);
 	void ConvertAnalogueToResistance();
 	void ConvertResistanceToCelcius();
+	
 };
 
 #endif

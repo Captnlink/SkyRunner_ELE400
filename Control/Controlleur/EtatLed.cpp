@@ -1,4 +1,4 @@
-#include "SrEtatLed.h"
+#include "EtatLed.h"
 
 EtatLed::EtatLed(){
 	flashLedState = 0; //�tat de la LED (Allum� ou �teinte)
@@ -39,7 +39,6 @@ bool EtatLed::UpdateLedState(/*State of Controler*/){
     	case 0 : 
     	//Const green
             if((STATE_GOOD & controllerState)){
-                Serial.println("Good");
                 ChangeLedColor(color_CG[flashLedState]);
                 flashLedState++;
                 
@@ -52,7 +51,6 @@ bool EtatLed::UpdateLedState(/*State of Controler*/){
     	case 1:
         	//Flash Red
         	if((STATE_LOWBATT & controllerState)){
-        	    Serial.println("Batteire faible");
         	    if(flashLedState >= MAX_LED_UPDATE-1 && errorState ==1) {
         			flashLedState=0; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
         		}
@@ -69,7 +67,6 @@ bool EtatLed::UpdateLedState(/*State of Controler*/){
 		case 2:
             //Flash Red Yellow
             if((STATE_HOTBATT & controllerState)){
-    		    Serial.println("Batterie chaude");
     			if(flashLedState >= MAX_LED_UPDATE-1 && errorState == 2) {
     				flashLedState=0; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
     			}
@@ -86,7 +83,6 @@ bool EtatLed::UpdateLedState(/*State of Controler*/){
 		case 3:
             //Flash RED RED YELLOW YELLOW
             if((STATE_OBJDETECT & controllerState)){
-                Serial.println("Objet detecter");
                 if(flashLedState >= MAX_LED_UPDATE-1 && errorState ==3) {
                     flashLedState=0; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
                 }
@@ -103,7 +99,6 @@ bool EtatLed::UpdateLedState(/*State of Controler*/){
         case 4:
             //Flash Yellow
             if((STATE_ENDCOURSE & controllerState)){
-    		    Serial.println("End Course");
     			if(flashLedState >= MAX_LED_UPDATE-1 && errorState ==4) {
     				flashLedState=0; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
     			}
@@ -121,7 +116,6 @@ bool EtatLed::UpdateLedState(/*State of Controler*/){
         case 5:    
             //Flash Green
             if((STATE_NOSETPOINT & controllerState)){
-		    Serial.println("Pas la vitesse voulu");
 			if(flashLedState >= MAX_LED_UPDATE-1 && errorState ==5) {
 				flashLedState=0; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
 			}
@@ -139,7 +133,6 @@ bool EtatLed::UpdateLedState(/*State of Controler*/){
         case 6:
             //Const Red
     		if((STATE_EMERGENCY & controllerState)){
-    		    Serial.println("Urgence");
     			if(flashLedState >= MAX_LED_UPDATE-1 && errorState ==6) {
     				flashLedState=0; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
     			}
@@ -156,7 +149,6 @@ bool EtatLed::UpdateLedState(/*State of Controler*/){
 	    case 7:
     	    //const yellow
     		if(errorState== 7 && (STATE_NOCOMMS & controllerState)){
-    		    Serial.println("Pas de Comms");
     			if(flashLedState >= MAX_LED_UPDATE-1 && errorState ==7) {
     				flashLedState=0; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
     			}
@@ -173,7 +165,6 @@ bool EtatLed::UpdateLedState(/*State of Controler*/){
     	case 8:
     	    //Const No light
     		if(errorState== 8){
-    		    Serial.println("End of Update");
     			if(flashLedState >= MAX_LED_UPDATE-1 && errorState ==8) {
     				flashLedState=0; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
     			}
@@ -195,150 +186,6 @@ bool EtatLed::UpdateLedState(/*State of Controler*/){
     		}
     		break;
 	}
-    		
-		
-	/*	
-		//Constantament Green
-		if(errorState== 0 && (STATE_GOOD & controllerState)){
-		    Serial.println("Good");
-		    ChangeLedColor(color_CG[flashLedState]);
-		    flashLedState++;
-		    
-			if(flashLedState == MAX_LED_UPDATE-1) {
-				errorState++; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
-			}
-
-		}
-		else errorState++;
-		
-		//Flash Red
-		if(errorState== 1 && (STATE_LOWBATT & controllerState)){
-		    Serial.println("Batteire faible");
-		    if(flashLedState == MAX_LED_UPDATE-1 && errorState ==1) {
-				flashLedState=0; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
-			}
-		    
-		    ChangeLedColor(color_FR[flashLedState]);
-		    flashLedState++;
-		    
-			if(flashLedState == MAX_LED_UPDATE-1) {
-				errorState++; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
-			}
-		}
-		else errorState++;
-		
-		//Flash Red Yellow
-		if(errorState== 2 && (STATE_HOTBATT & controllerState)){
-		    Serial.println("Batterie chaude");
-			if(flashLedState == MAX_LED_UPDATE-1 && errorState == 2) {
-				flashLedState=0; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
-			}
-		    
-		    ChangeLedColor(color_FRY[flashLedState]);
-		    flashLedState++;
-		    
-			if(flashLedState == MAX_LED_UPDATE-1) {
-				errorState++; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
-			}
-		}
-		else errorState++;
-		
-		//Flash RED RED YELLOW YELLOW
-		if(errorState== 3 && (STATE_OBJDETECT & controllerState)){
-		    Serial.println("Objet detecter");
-			if(flashLedState == MAX_LED_UPDATE-1 && errorState ==3) {
-				flashLedState=0; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
-			}
-		    
-		    ChangeLedColor(color_FRRYY[flashLedState]);
-		    flashLedState++;
-		    
-			if(flashLedState == MAX_LED_UPDATE-1) {
-				errorState++; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
-			}
-		}
-		else errorState++;
-
-        //Flash Yellow
-		if(errorState== 4 && (STATE_ENDCOURSE & controllerState)){
-		    Serial.println("End Course");
-			if(flashLedState == MAX_LED_UPDATE-1 && errorState ==4) {
-				flashLedState=0; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
-			}
-		    
-		    ChangeLedColor(color_FY[flashLedState]);
-		    flashLedState++;
-		    
-			if(flashLedState == MAX_LED_UPDATE-1) {
-				errorState++; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
-			}
-		}
-		else errorState++;
-		
-		//Flash Green
-		if(errorState== 5 && (STATE_NOSETPOINT & controllerState)){
-		    Serial.println("Pas la vitesse voulu");
-			if(flashLedState == MAX_LED_UPDATE-1 && errorState ==5) {
-				flashLedState=0; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
-			}
-		    
-		    ChangeLedColor(color_FG[flashLedState]);
-		    flashLedState++;
-		    
-			if(flashLedState == MAX_LED_UPDATE-1) {
-				errorState++; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
-			}
-		}
-		else errorState++;
-		
-		//Const Red
-		if(errorState== 6 && (STATE_EMERGENCY & controllerState)){
-		    Serial.println("Urgence");
-			if(flashLedState == MAX_LED_UPDATE-1 && errorState ==6) {
-				flashLedState=0; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
-			}
-		    
-		    ChangeLedColor(color_CR[flashLedState]);
-		    flashLedState++;
-		    
-			if(flashLedState == MAX_LED_UPDATE-1) {
-				errorState++; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
-			}
-		}
-		else errorState++;
-		
-		//const yellow
-		if(errorState== 7 && (STATE_NOCOMMS & controllerState)){
-		    Serial.println("Pas de Comms");
-			if(flashLedState == MAX_LED_UPDATE-1 && errorState ==7) {
-				flashLedState=0; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
-			}
-		    
-		    ChangeLedColor(color_CY[flashLedState]);
-		    flashLedState++;
-		    
-			if(flashLedState == MAX_LED_UPDATE-1) {
-				errorState++; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
-			}
-		}
-		else errorState++;
-		
-		//Const No light
-		if(errorState== 8){
-		    Serial.println("End of Update");
-			if(flashLedState == MAX_LED_UPDATE-1 && errorState ==8) {
-				flashLedState=0; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
-			}
-		    
-		    ChangeLedColor(color_CN[flashLedState]);
-		    flashLedState++;
-		    
-			if(flashLedState == (MAX_LED_UPDATE-1)/2) {
-				errorState++; // modifie etape _erreur pour v�rifier la prochaine erreur d�tect�
-			}
-		}
-		if(errorState>8)errorState=0;*/
-	
 	return false;
 }
 
@@ -374,6 +221,7 @@ void EtatLed::ChangeLedColor(int color)
 	}
 }
 //Setters
+//On set le mask d'etats avec ses setters-ci
 bool EtatLed::SetGood(bool state){
 	if(state)
 	{
@@ -400,7 +248,7 @@ bool EtatLed::SetBattFaible(double tensionBatterie){
 }
 
 bool EtatLed::SetBattTooHot(double tempBatterie){
-	if(tempBatterie<TEMP_BATT_TOO_HOT)
+	if(tempBatterie>TEMP_BATT_TOO_HOT)
 	{
 		controllerState = controllerState | STATE_HOTBATT;
 		return true;
@@ -413,7 +261,7 @@ bool EtatLed::SetBattTooHot(double tempBatterie){
 }
 
 bool EtatLed::SetObjectDetected(int distanceObjetDetecteAvant, int distanceObjetDetecteArriere){
-	if(distanceObjetDetecteAvant != -1 || distanceObjetDetecteArriere != -1)
+	if((distanceObjetDetecteAvant != 0 && 100>distanceObjetDetecteAvant) || (distanceObjetDetecteArriere != 0 && 100>distanceObjetDetecteArriere))
 	{
 		controllerState = controllerState | STATE_OBJDETECT;
 		return true;
@@ -427,7 +275,7 @@ bool EtatLed::SetObjectDetected(int distanceObjetDetecteAvant, int distanceObjet
 }
 
 bool EtatLed::SetEndOfCourse(int positionActuel, int PositionMax){
-	if(PositionMax - MAX_POSITION_LV_5 < positionActuel || MAX_POSITION_LV_5 > positionActuel)
+	if(!((PositionMax - MAX_POSITION_LV_1) > positionActuel && MAX_POSITION_LV_1 < positionActuel))
 	{
 		controllerState = controllerState | STATE_ENDCOURSE;
 		return true;
@@ -437,6 +285,7 @@ bool EtatLed::SetEndOfCourse(int positionActuel, int PositionMax){
 		controllerState = controllerState & ~STATE_ENDCOURSE;
 		return false;
 	}
+	
 }
 
 bool EtatLed::SetCantGoSetPoint(int vitesseActuel, int vitesseVoulu){
@@ -466,7 +315,7 @@ bool EtatLed::SetEmergencyStop(bool state){
 }
 
 bool EtatLed::SetNoComms(bool state){
-	if(state)
+	if(!state)
 	{
 		controllerState = controllerState | STATE_NOCOMMS;
 		return true;

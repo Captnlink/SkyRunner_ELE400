@@ -1,27 +1,32 @@
 /**
- *	@file SrCommunication.h
- *	@brief Contient la classe permettant la communication avec XBee
- *
- *	@author Captnlink
- *	@author khchu1993
- *	@version 1.4
- *	@date April 4, 2016
- */
+    @file SrCommunication.h
+    @brief Contient la classe permettant la communication avec XBee
+
+	@author Captnlink
+    @author khchu1993
+
+    @version 1.2
+    @date April 4, 2016
+*/
 
 #ifndef SRCOMMUNICATION_H
 #define SRCOMMUNICATION_H
 
 #include "Arduino.h"
 #include "SrConfig.h"
-#include "SrBrainControl.h"
-#include "SrEtatLed.h"
+#include "BrainControl.h"
+#include "EtatLed.h"
 
 /**
- *	@class CommXBee
- *	@brief Permet la reception, l'emission et le traitement des informations transmise par le port serie.
- *	@author Captnlink
- *	@author khchu1993
- */
+    @class CommXBee
+    @brief Permet la reception, l'emission et le traitement des informations transmise par le port serie.
+
+    @author Captnlink
+	@author khchu1993
+    @version 1.4
+    @date April 14, 2016
+	
+*/
 class CommXBee
 {
 public:
@@ -47,15 +52,15 @@ public:
 	 */
 	void UpdateConfiguration(BrainControl& _Controlleur);
 	
-	void SetConnexionFalse(){
-		connexion=false;
-		manetteAdresse =-1;
-	}
-	void IncrementPing(){ping++;}
-	int GetPing(){return ping;}
+   void SetConnexionFalse(){
+       connexion=false;
+       manetteAdresse =-1;
+   }
+   void IncrementPing(){ping++;}
+   int GetPing(){return ping;}
 
 	//Getters
-	bool IsConnected(){return connexion;}
+  bool IsConnected(){return connexion;}
 	bool IsArretUrgence(){return arretUrgence;}
 	int GetVitesse(){return vitesse;}
 	int GetAcceleration(){return acceleration;}
